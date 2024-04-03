@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Poe输入对话框
 // @namespace    http://tampermonkey.net/
-// @version      v24.04.03
+// @version      v24.04.04
 // @description 添加一个对话框在 Poe 页面上，方便长文本输入: 1) 双击文本框打开对话框 2) 点击右下角按钮打开对话框 3) Ctrl+Enter 提交 4) Ctrl+[-=] 调整字体大小
 // @author       You
 // @match        https://poe.com/chat/*
@@ -42,43 +42,17 @@ function createTextInputDialog(confirmCallback) {
     // Create the dialog
     const dialog = document.createElement('div');
     dialog.id = 'dialog';
-    dialog.style.backgroundColor = 'var(--pdl-bg-base)';
-    dialog.style.padding = '21px';
-    dialog.style.borderRadius = '8px';
-    dialog.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.3)';
-    dialog.style.display = 'flex';
-    dialog.style.width = '50%';
-    dialog.style.flexDirection = 'column';
-    dialog.style.maxWidth = '900px';
-    dialog.style.minWidth = '400px';
-    dialog.style.height = '500px';
-    dialog.style.position = 'absolute';
-    dialog.style.bottom = '100px';
 
     // Create the text input area
     const textInput = document.createElement('div');
-    // textInput.className = 'GrowingTextArea_growWrap__im5W3 ChatMessageInputContainer_textArea__fNi6E';
+    textInput.id = 'dialog-text-input';
     textInput.dataset.replicatedValue = '';
-    textInput.style.border = '1px solid var(--pdl-accent-base)';
-    textInput.style.borderRadius = '4px';
-    textInput.style.padding = '8px';
-    textInput.style.flexGrow = '1'; // Allow the text input area to grow
-    textInput.style.display = 'flex'; // Make the text input area a flex container
-    textInput.style.flexDirection = 'column'; // Stack child elements vertically
 
     const textarea = document.createElement('textarea');
     textarea.className = 'GrowingTextArea_textArea__ZWQbP';
     textarea.rows = 5;
     textarea.background = 'var(--pdl-bg-base) !important';
     textarea.placeholder = 'Talk to ...';
-    textarea.style.width = '100%';
-    textarea.style.border = 'none';
-    textarea.style.outline = 'none';
-    textarea.style.resize = 'none';
-    textarea.style.fontSize = '22px';
-    textarea.style.lineHeight = '1.5';
-    textarea.style.fontFamily = FontFamily;
-    textarea.style.flexGrow = '1'; // Allow the textarea to grow vertically
     textInput.appendChild(textarea);
 
     //show space inside textarea
@@ -140,24 +114,11 @@ function createTextInputDialog(confirmCallback) {
     const cancelButton = document.createElement('button');
     cancelButton.id = 'cancel-button';
     cancelButton.textContent = 'Cancel';
-    cancelButton.style.marginRight = '8px';
-    cancelButton.style.padding = '8px 16px';
-    cancelButton.style.backgroundColor = '#f2f2f2';
-    cancelButton.style.color = '#333';
-    cancelButton.style.border = '1px solid #ccc';
-    cancelButton.style.borderRadius = '4px';
-    cancelButton.style.cursor = 'pointer';
 
     // Create the confirm button
     const confirmButton = document.createElement('button');
     confirmButton.id = 'confirm-button';
     confirmButton.textContent = 'Confirm';
-    confirmButton.style.padding = '8px 16px';
-    confirmButton.style.backgroundColor = 'var(--pdl-accent-base)';
-    confirmButton.style.color = '#fff';
-    confirmButton.style.border = 'none';
-    confirmButton.style.borderRadius = '4px';
-    confirmButton.style.cursor = 'pointer';
 
     // Append buttons to the button container
     buttonContainer.appendChild(cancelButton);
@@ -259,9 +220,9 @@ function updateStyleSheet(id, cssText) {
     }
     style.textContent = cssText;
 }
-createTextInputDialog(confirmed);
-createButton();
-updateStyleSheet('custom-dialog-style', `
+
+function createStyleSheet() {
+    updateStyleSheet('custom-dialog-style', `
 textarea.GrowingTextArea_textArea__ZWQbP {
     background: var(--pdl-bg-base) !important;
 }
@@ -276,7 +237,63 @@ button#floating-button {
     border-radius: 25px;
     cursor: pointer;
 }
-`);
+div#dialog {
+    background-color: var(--pdl-bg-base);
+    padding: 21px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    max-width: 900px;
+    min-width: 400px;
+    height: 500px;
+    position: absolute;
+    bottom: 100px;
+}
+div#dialog #dialog-text-input {
+    border: 1px solid var(--pdl-accent-base);
+    border-radius: 4px;
+    padding: 8px;
+    flex-grow: 1; /* Allow the text input area to grow */
+    display: flex; /* Make the text input area a flex container */
+    flex-direction: column; /* Stack child elements vertically */
+}
+div#dialog #dialog-text-input textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 22px;
+    line-height: 1.5;
+    font-family: ${FontFamily};
+    flex-grow: 1; /* Allow the textarea to grow vertically */
+}
+
+div#dialog button#cancel-button {
+    margin-right: 8px;
+    padding: 8px 16px;
+    background-color: #f2f2f2;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+div#dialog button#confirm-button {
+    padding: 8px 16px;
+    background-color: var(--pdl-accent-base);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+    `);
+}
+
+createTextInputDialog(confirmed);
+createButton();
+createStyleSheet();
 
 //监听鼠鼠标
 document.addEventListener('dblclick', () => {
