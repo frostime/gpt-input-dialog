@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Poe输入对话框
 // @namespace    http://tampermonkey.net/
-// @version      2024-04-03
+// @version      v24.04.03
 // @description 添加一个对话框在 Poe 页面上，方便长文本输入
 // @author       You
 // @match        https://poe.com/chat/*
@@ -195,31 +195,35 @@ function updateTextInputDialog() {
     }
 }
 
+function openDialog() {
+    globalThis.inputText = '';
+    Elements.overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    updateTextInputDialog();
+}
+
 function createButton() {
     // Create the floating button
     const floatingButton = document.createElement('button');
     floatingButton.id = 'floating-button';
     floatingButton.textContent = 'Dialog';
-    floatingButton.style.position = 'absolute';
-    floatingButton.style.top = '0px';
-    floatingButton.style.right = '0px';
-    floatingButton.style.padding = '10px 20px';
-    floatingButton.style.backgroundColor = 'var(--pdl-accent-base)';
-    floatingButton.style.color = '#fff';
-    floatingButton.style.border = 'none';
-    floatingButton.style.borderTopRightRadius = '25px';
-    floatingButton.style.cursor = 'pointer';
+    // floatingButton.style.position = 'absolute';
+    // floatingButton.style.bottom = '10px';
+    // floatingButton.style.right = '10px';
+    // floatingButton.style.padding = '10px 20px';
+    // floatingButton.style.backgroundColor = 'var(--pdl-accent-base)';
+    // floatingButton.style.color = '#fff';
+    // floatingButton.style.border = 'none';
+    // floatingButton.style.borderTopRightRadius = '25px';
+    // floatingButton.style.borderRadius = '25px';
+    // floatingButton.style.cursor = 'pointer';
     // Add event listeners
-    floatingButton.addEventListener('click', () => {
-        globalThis.inputText = '';
-        Elements.overlay.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        updateTextInputDialog();
-    });
+    floatingButton.addEventListener('click', openDialog);
     Elements.floatingButton = floatingButton;
-    const chatBox = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa');
+
+    // const box = document.querySelector('main.SidebarLayout_main__0ZApe');
     document.body.appendChild(floatingButton);
-    //chatBox.appendChild(floatingButton);
+    // box.appendChild(floatingButton);
 }
 
 function confirmed(text) {
@@ -247,5 +251,25 @@ updateStyleSheet('custom-dialog-style', `
 textarea.GrowingTextArea_textArea__ZWQbP {
     background: var(--pdl-bg-base) !important;
 }
+button#floating-button {
+    position: absolute; /* 或者 relative 或者 fixed，取决于需求 */
+    right: 50px;
+    bottom: 10px;
+    padding: 10px 20px;
+    background-color: var(--pdl-accent-base);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
 `);
+
+//监听鼠鼠标
+document.addEventListener('dblclick', () => {
+    let activeElement = document.activeElement;
+    if (activeElement.tagName === 'TEXTAREA' && activeElement.className === 'GrowingTextArea_textArea__ZWQbP') {
+        openDialog();
+    }
+});
+
 })();
