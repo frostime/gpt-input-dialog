@@ -1,19 +1,12 @@
-function createTextInputDialog() {
-    // Create the floating button
-    const floatingButton = document.createElement('button');
-    floatingButton.id = 'floating-button';
-    floatingButton.textContent = 'Open Dialog';
-    floatingButton.style.position = 'fixed';
-    floatingButton.style.bottom = '20px';
-    floatingButton.style.right = '20px';
-    floatingButton.style.padding = '10px 20px';
-    floatingButton.style.backgroundColor = '#007bff';
-    floatingButton.style.color = '#fff';
-    floatingButton.style.border = 'none';
-    floatingButton.style.borderRadius = '4px';
-    floatingButton.style.cursor = 'pointer';
-    document.body.appendChild(floatingButton);
+const elements = {
+    overlay: null,
+    dialog: null,
+    textarea: null,
+    cancelButton: null,
+    confirmButton: null,
+}
 
+function createTextInputDialog(confirmCallback) {
     // Create the overlay
     const overlay = document.createElement('div');
     overlay.id = 'overlay';
@@ -139,12 +132,6 @@ function createTextInputDialog() {
     // Append overlay to the document body
     document.body.appendChild(overlay);
 
-    // Add event listeners
-    floatingButton.addEventListener('click', () => {
-        overlay.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    });
-
     cancelButton.addEventListener('click', () => {
         overlay.style.display = 'none';
         document.body.style.overflow = 'auto';
@@ -154,8 +141,60 @@ function createTextInputDialog() {
         globalThis.inputText = textarea.value;
         overlay.style.display = 'none';
         document.body.style.overflow = 'auto';
+        confirmCallback(globalThis.inputText);
     });
+
+    elements.overlay = overlay;
+    elements.dialog = dialog;
+    elements.textarea = textarea;
+    elements.cancelButton = cancelButton;
+    elements.confirmButton = confirmButton;
+
+    return overlay;
 }
 
+function updateTextInputDialog() {
+    const baseText = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa textarea').value;
+    elements.textarea.value = baseText || '';
+}
+
+function createButton(overlay) {
+    // Create the floating button
+    const floatingButton = document.createElement('button');
+    floatingButton.id = 'floating-button';
+    floatingButton.textContent = 'Open Dialog';
+    floatingButton.style.position = 'fixed';
+    floatingButton.style.bottom = '20px';
+    floatingButton.style.right = '20px';
+    floatingButton.style.padding = '10px 20px';
+    floatingButton.style.backgroundColor = '#007bff';
+    floatingButton.style.color = '#fff';
+    floatingButton.style.border = 'none';
+    floatingButton.style.borderRadius = '4px';
+    floatingButton.style.cursor = 'pointer';
+    const chatBox = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa');
+    document.body.appendChild(floatingButton);
+    // Add event listeners
+    floatingButton.addEventListener('click', () => {
+        globalThis.inputText = '';
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        updateTextInputDialog();
+    });
+    return floatingButton;
+}
+
+function confirmed(text) {
+    if (!text) return;
+    const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
+    const textarea = document.querySelector(q);
+    if (textarea) {
+        textarea.value = text;
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+}
+
+
 // Call the function to create the text input dialog
-createTextInputDialog();
+const overlay = createTextInputDialog(confirmed);
+const button = createButton(overlay);
