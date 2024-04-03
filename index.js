@@ -8,6 +8,8 @@ const Elements = {
     floatingButton: null
 }
 
+const Q = document.querySelector.bind(document);
+
 function createTextInputDialog(confirmCallback) {
     // Create the overlay
     const overlay = document.createElement('div');
@@ -161,6 +163,10 @@ function createTextInputDialog(confirmCallback) {
 function updateTextInputDialog() {
     const baseText = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa textarea').value;
     Elements.textarea.value = baseText || '';
+    const title = Q('p.ChatHeader_overflow__aVkfq');
+    if (title) {
+        Elements.textarea.placeholder = `Talk to ${title.textContent}`;
+    }
 }
 
 function createButton() {
@@ -172,7 +178,7 @@ function createButton() {
     floatingButton.style.top = '0px';
     floatingButton.style.right = '0px';
     floatingButton.style.padding = '10px 20px';
-    floatingButton.style.backgroundColor = '#007bff';
+    floatingButton.style.backgroundColor = 'var(--pdl-accent-base)';
     floatingButton.style.color = '#fff';
     floatingButton.style.border = 'none';
     floatingButton.style.borderTopRightRadius = '25px';
