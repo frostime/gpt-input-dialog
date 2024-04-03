@@ -1,9 +1,11 @@
-const elements = {
+const Elements = {
     overlay: null,
     dialog: null,
     textarea: null,
     cancelButton: null,
     confirmButton: null,
+
+    floatingButton: null
 }
 
 function createTextInputDialog(confirmCallback) {
@@ -144,21 +146,19 @@ function createTextInputDialog(confirmCallback) {
         confirmCallback(globalThis.inputText);
     });
 
-    elements.overlay = overlay;
-    elements.dialog = dialog;
-    elements.textarea = textarea;
-    elements.cancelButton = cancelButton;
-    elements.confirmButton = confirmButton;
-
-    return overlay;
+    Elements.overlay = overlay;
+    Elements.dialog = dialog;
+    Elements.textarea = textarea;
+    Elements.cancelButton = cancelButton;
+    Elements.confirmButton = confirmButton;
 }
 
 function updateTextInputDialog() {
     const baseText = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa textarea').value;
-    elements.textarea.value = baseText || '';
+    Elements.textarea.value = baseText || '';
 }
 
-function createButton(overlay) {
+function createButton() {
     // Create the floating button
     const floatingButton = document.createElement('button');
     floatingButton.id = 'floating-button';
@@ -177,11 +177,11 @@ function createButton(overlay) {
     // Add event listeners
     floatingButton.addEventListener('click', () => {
         globalThis.inputText = '';
-        overlay.style.display = 'flex';
+        Elements.overlay.style.display = 'flex';
         document.body.style.overflow = 'hidden';
         updateTextInputDialog();
     });
-    return floatingButton;
+    Elements.floatingButton = floatingButton;
 }
 
 function confirmed(text) {
@@ -196,5 +196,5 @@ function confirmed(text) {
 
 
 // Call the function to create the text input dialog
-const overlay = createTextInputDialog(confirmed);
-const button = createButton(overlay);
+createTextInputDialog(confirmed);
+createButton(overlay);
