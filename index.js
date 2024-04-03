@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Poe输入对话框
 // @namespace    http://tampermonkey.net/
-// @version      v24.4.8
-// @description 添加一个对话框在 Poe 页面上，方便长文本输入: 1) 双击文本框打开对话框 2) 点击右下角按钮打开对话框 3) Ctrl+Enter 提交 4) Ctrl+[-=] 调整字体大小
+// @version      v24.4.9
+// @description 添加一个对话框在 Poe 页面上，方便长文本输入
 // @author       frostime
 // @match        https://poe.com/chat/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=poe.com
@@ -120,13 +120,12 @@ function createTextInputDialog(confirmCallback) {
             textarea.scrollTop = textarea.scrollHeight; // Scroll to the bottom
         }
 
-        //Press ctrl+[-=] to change font size
-        if (key === '-' && event.ctrlKey) {
+        //Press ctrl+[up arrow /down arrow] to change font size
+        if (event.ctrlKey && (key === 'ArrowUp' || key === 'ArrowDown')) {
             event.preventDefault();
-            textarea.style.fontSize = `${parseInt(textarea.style.fontSize) - 1}px`;
-        } else if (key === '=' && event.ctrlKey) {
-            event.preventDefault();
-            textarea.style.fontSize = `${parseInt(textarea.style.fontSize) + 1}px`;
+            const fontSize = parseInt(window.getComputedStyle(textarea).fontSize);
+            const newFontSize = key === 'ArrowUp' ? fontSize + 1 : fontSize - 1;
+            textarea.style.fontSize = `${newFontSize}px`;
         }
 
     });
@@ -246,13 +245,13 @@ function submit() {
     }, 500);
 }
 
-function confirmed(text, submit=false) {
+function confirmed(text, doSubmit=false) {
     if (!text) return;
     const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
     const textarea = document.querySelector(q);
     if (textarea) {
         textarea.value = text;
-        if (submit) {
+        if (doSubmit) {
             submit();
         }
     }
