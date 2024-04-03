@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Poe输入对话框
 // @namespace    http://tampermonkey.net/
-// @version      v24.4.6
+// @version      v24.4.7
 // @description 添加一个对话框在 Poe 页面上，方便长文本输入: 1) 双击文本框打开对话框 2) 点击右下角按钮打开对话框 3) Ctrl+Enter 提交 4) Ctrl+[-=] 调整字体大小
 // @author       frostime
 // @match        https://poe.com/chat/*
@@ -135,15 +135,21 @@ function createTextInputDialog(confirmCallback) {
     // Create the cancel button
     const cancelButton = document.createElement('button');
     cancelButton.id = 'cancel-button';
-    cancelButton.textContent = 'Cancel';
+    cancelButton.textContent = '取消';
+
+    // Create the confirm button
+    const fillButton = document.createElement('button');
+    fillButton.id = 'fill-button';
+    fillButton.textContent = '填充';
 
     // Create the confirm button
     const confirmButton = document.createElement('button');
     confirmButton.id = 'confirm-button';
-    confirmButton.textContent = 'Confirm';
+    confirmButton.textContent = '提交';
 
     // Append buttons to the button container
     buttonContainer.appendChild(cancelButton);
+    buttonContainer.appendChild(fillButton);
     buttonContainer.appendChild(confirmButton);
 
     // Append text input and button container to the dialog
@@ -161,11 +167,18 @@ function createTextInputDialog(confirmCallback) {
         document.body.style.overflow = 'auto';
     });
 
+    fillButton.addEventListener('click', () => {
+        globalThis.inputText = textarea.value;
+        overlay.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        confirmCallback(globalThis.inputText, false);
+    });
+
     confirmButton.addEventListener('click', () => {
         globalThis.inputText = textarea.value;
         overlay.style.display = 'none';
         document.body.style.overflow = 'auto';
-        confirmCallback(globalThis.inputText);
+        confirmCallback(globalThis.inputText, true);
     });
 
     Elements.overlay = overlay;
@@ -223,13 +236,15 @@ function submit() {
     }, 500);
 }
 
-function confirmed(text) {
+function confirmed(text, submit=false) {
     if (!text) return;
     const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
     const textarea = document.querySelector(q);
     if (textarea) {
         textarea.value = text;
-        submit();
+        if (submit) {
+            submit();
+        }
     }
 }
 
@@ -272,7 +287,7 @@ div#dialog {
     height: 500px;
     max-height: 80%;
     position: absolute;
-    bottom: 100px;
+    bottom: 50px;
 }
 div#dialog #dialog-text-input {
     border: 1px solid var(--pdl-accent-base);
@@ -302,7 +317,15 @@ div#dialog button#cancel-button {
     border-radius: 4px;
     cursor: pointer;
 }
-
+div#dialog button#fill-button {
+    margin-right: 8px;
+    padding: 8px 16px;
+    background-color: var(--pdl-accent-base);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 div#dialog button#confirm-button {
     padding: 8px 16px;
     background-color: var(--pdl-accent-base);
