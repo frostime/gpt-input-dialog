@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Poe输入对话框
 // @namespace    http://tampermonkey.net/
-// @version      v24.4.7
+// @version      v24.4.8
 // @description 添加一个对话框在 Poe 页面上，方便长文本输入: 1) 双击文本框打开对话框 2) 点击右下角按钮打开对话框 3) Ctrl+Enter 提交 4) Ctrl+[-=] 调整字体大小
 // @author       frostime
 // @match        https://poe.com/chat/*
@@ -61,6 +61,11 @@ function createTextInputDialog(confirmCallback) {
     // Handle tab and enter key events
     textarea.addEventListener('keydown', (event) => {
         const { key, shiftKey } = event;
+
+        //Esc to close dialog
+        if (key === 'Escape') {
+            cancelButton.click();
+        }
 
         // Handle tab key
         if (key === 'Tab' && !shiftKey) {
@@ -189,6 +194,11 @@ function createTextInputDialog(confirmCallback) {
 }
 
 function updateTextInputDialog() {
+    const aside = 'aside.SidebarLayout_sidebar__SXeDJ.SidebarLayout_left__k163a';
+    const sidebar = document.querySelector(aside);
+    const width = sidebar ? sidebar.offsetWidth : 0;
+    Elements.dialog.style.transform = `translateX(${width/2}px)`;
+
     const baseText = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa textarea').value;
     Elements.textarea.value = baseText || '';
     const title = document.querySelector('p.ChatHeader_overflow__aVkfq');
