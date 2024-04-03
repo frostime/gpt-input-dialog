@@ -27,7 +27,7 @@ function createTextInputDialog(confirmCallback) {
     const dialog = document.createElement('div');
     dialog.id = 'dialog';
     dialog.style.backgroundColor = '#fff';
-    dialog.style.padding = '20px';
+    dialog.style.padding = '21px';
     dialog.style.borderRadius = '8px';
     dialog.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.3)';
     dialog.style.display = 'flex';
@@ -35,13 +35,15 @@ function createTextInputDialog(confirmCallback) {
     dialog.style.flexDirection = 'column';
     dialog.style.maxWidth = '900px';
     dialog.style.minWidth = '400px';
-    dialog.style.height = '600px';
+    dialog.style.height = '500px';
+    dialog.style.position = 'absolute';
+    dialog.style.bottom = '100px';
 
     // Create the text input area
     const textInput = document.createElement('div');
     // textInput.className = 'GrowingTextArea_growWrap__im5W3 ChatMessageInputContainer_textArea__fNi6E';
     textInput.dataset.replicatedValue = '';
-    textInput.style.border = '1px solid #ccc';
+    textInput.style.border = '1px solid var(--pdl-accent-base)';
     textInput.style.borderRadius = '4px';
     textInput.style.padding = '8px';
     textInput.style.flexGrow = '1'; // Allow the text input area to grow
@@ -61,6 +63,9 @@ function createTextInputDialog(confirmCallback) {
     textarea.style.fontFamily = 'HarmonyOS Sans';
     textarea.style.flexGrow = '1'; // Allow the textarea to grow vertically
     textInput.appendChild(textarea);
+
+    //show space inside textarea
+    textarea.style.whiteSpace = 'pre-wrap';
 
     // Handle tab and enter key events
     textarea.addEventListener('keydown', (event) => {
@@ -114,7 +119,7 @@ function createTextInputDialog(confirmCallback) {
     confirmButton.id = 'confirm-button';
     confirmButton.textContent = 'Confirm';
     confirmButton.style.padding = '8px 16px';
-    confirmButton.style.backgroundColor = '#007bff';
+    confirmButton.style.backgroundColor = 'var(--pdl-accent-base)';
     confirmButton.style.color = '#fff';
     confirmButton.style.border = 'none';
     confirmButton.style.borderRadius = '4px';
@@ -162,18 +167,16 @@ function createButton() {
     // Create the floating button
     const floatingButton = document.createElement('button');
     floatingButton.id = 'floating-button';
-    floatingButton.textContent = 'Open Dialog';
-    floatingButton.style.position = 'fixed';
-    floatingButton.style.bottom = '20px';
-    floatingButton.style.right = '20px';
+    floatingButton.textContent = 'Dialog';
+    floatingButton.style.position = 'absolute';
+    floatingButton.style.top = '0px';
+    floatingButton.style.right = '0px';
     floatingButton.style.padding = '10px 20px';
     floatingButton.style.backgroundColor = '#007bff';
     floatingButton.style.color = '#fff';
     floatingButton.style.border = 'none';
-    floatingButton.style.borderRadius = '4px';
+    floatingButton.style.borderTopRightRadius = '25px';
     floatingButton.style.cursor = 'pointer';
-    const chatBox = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa');
-    document.body.appendChild(floatingButton);
     // Add event listeners
     floatingButton.addEventListener('click', () => {
         globalThis.inputText = '';
@@ -182,6 +185,9 @@ function createButton() {
         updateTextInputDialog();
     });
     Elements.floatingButton = floatingButton;
+    const chatBox = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa');
+    // document.body.appendChild(floatingButton);
+    chatBox.appendChild(floatingButton);
 }
 
 function confirmed(text) {
