@@ -1,3 +1,17 @@
+// ==UserScript==
+// @name         Poe输入对话框
+// @namespace    http://tampermonkey.net/
+// @version      2024-04-03
+// @description 添加一个对话框在 Poe 页面上，方便长文本输入
+// @author       You
+// @match        https://poe.com/chat/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=poe.com
+// @grant        none
+// @run-at       document-end
+// ==/UserScript==
+
+(function() {
+    'use strict';
 let Elements = {
     overlay: null,
     dialog: null,
@@ -204,8 +218,8 @@ function createButton() {
     });
     Elements.floatingButton = floatingButton;
     const chatBox = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa');
-    // document.body.appendChild(floatingButton);
-    chatBox.appendChild(floatingButton);
+    document.body.appendChild(floatingButton);
+    //chatBox.appendChild(floatingButton);
 }
 
 function confirmed(text) {
@@ -227,9 +241,6 @@ function updateStyleSheet(id, cssText) {
     }
     style.textContent = cssText;
 }
-
-
-// Call the function to create the text input dialog
 createTextInputDialog(confirmed);
 createButton();
 updateStyleSheet('custom-dialog-style', `
@@ -237,3 +248,4 @@ textarea.GrowingTextArea_textArea__ZWQbP {
     background: var(--pdl-bg-base) !important;
 }
 `);
+})();
