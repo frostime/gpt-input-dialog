@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Poe输入对话框
 // @namespace    http://tampermonkey.net/
-// @version      v24.04.04
+// @version      v24.4.6
 // @description 添加一个对话框在 Poe 页面上，方便长文本输入: 1) 双击文本框打开对话框 2) 点击右下角按钮打开对话框 3) Ctrl+Enter 提交 4) Ctrl+[-=] 调整字体大小
-// @author       You
+// @author       frostime
 // @match        https://poe.com/chat/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=poe.com
 // @grant        none
@@ -64,13 +64,31 @@ function createTextInputDialog(confirmCallback) {
 
         // Handle tab key
         if (key === 'Tab' && !shiftKey) {
-            event.preventDefault(); // Prevent the default tab behavior
+            event.preventDefault();
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             const textBeforeCursor = textarea.value.slice(0, start);
             const textAfterCursor = textarea.value.slice(end);
             textarea.value = `${textBeforeCursor}    ${textAfterCursor}`; // Insert 4 spaces
             textarea.selectionStart = textarea.selectionEnd = start + 4; // Move the cursor 4 positions forward
+        }
+
+        // Shift+Tab to unindent the text
+        if (key === 'Tab' && shiftKey) {
+            event.preventDefault();
+            const start = textarea.selectionStart;
+            // const end = textarea.selectionEnd;
+            const lines = textarea.value.split('\n');
+            const currentLineNumber = textarea.value.slice(0, start).split('\n').length - 1;
+            const currentLine = lines[currentLineNumber];
+            const whiteSpaceMatch = currentLine.match(/^(\t| {4})/);
+            const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
+            const textBeforeCurrentLine = lines.slice(0, currentLineNumber).join('\n');
+            const textAfterCurrentLine = lines.slice(currentLineNumber + 1).join('\n');
+            const updatedCurrentLine = currentLine.replace(/^(\t| {4})/, '');
+            const updatedValue = `${textBeforeCurrentLine}\n${updatedCurrentLine}\n${textAfterCurrentLine}`;
+            textarea.value = updatedValue;
+            textarea.selectionStart = textarea.selectionEnd = start - whiteSpace.length;
         }
 
         //Ctrl + Enter to submit
@@ -85,12 +103,16 @@ function createTextInputDialog(confirmCallback) {
             const start = textarea.selectionStart;
             const lines = textarea.value.split('\n');
             const currentLine = lines[lines.length - 1];
+            //获取当前行前面的空格
             const whiteSpaceMatch = currentLine.match(/^\s*/);
-            const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : ''; // Get the whitespace before the current line
+            const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
             const textBeforeCursor = textarea.value.slice(0, start);
             const textAfterCursor = textarea.value.slice(textarea.selectionEnd);
-            textarea.value = `${textBeforeCursor}\n${whiteSpace}${textAfterCursor}`; // Insert a new line with the same whitespace
-            textarea.selectionStart = textarea.selectionEnd = start + whiteSpace.length + 1; // Move the cursor after the whitespace
+            //新开一行自动缩进
+            textarea.value = `${textBeforeCursor}\n${whiteSpace}${textAfterCursor}`;
+            // Move the cursor after the whitespace
+            textarea.selectionStart = textarea.selectionEnd = start + whiteSpace.length + 1;
+            textarea.scrollTop = textarea.scrollHeight; // Scroll to the bottom
         }
 
         //Press ctrl+[-=] to change font size
@@ -227,7 +249,7 @@ textarea.GrowingTextArea_textArea__ZWQbP {
     background: var(--pdl-bg-base) !important;
 }
 button#floating-button {
-    position: absolute; /* 或者 relative 或者 fixed，取决于需求 */
+    position: absolute;
     right: 50px;
     bottom: 10px;
     padding: 10px 20px;
@@ -248,6 +270,7 @@ div#dialog {
     max-width: 900px;
     min-width: 400px;
     height: 500px;
+    max-height: 80%;
     position: absolute;
     bottom: 100px;
 }
