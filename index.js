@@ -2,7 +2,7 @@
 // @name         Poe输入对话框
 // @namespace    http://tampermonkey.net/
 // @version      v24.04.03
-// @description 添加一个对话框在 Poe 页面上，方便长文本输入
+// @description 添加一个对话框在 Poe 页面上，方便长文本输入: 1) 双击文本框打开对话框 2) 点击右下角按钮打开对话框 3) Ctrl+Enter 提交 4) Ctrl+[-=] 调整字体大小
 // @author       You
 // @match        https://poe.com/chat/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=poe.com
@@ -99,6 +99,12 @@ function createTextInputDialog(confirmCallback) {
             textarea.selectionStart = textarea.selectionEnd = start + 4; // Move the cursor 4 positions forward
         }
 
+        //Ctrl + Enter to submit
+        if (key === 'Enter' && event.ctrlKey) {
+            event.preventDefault();
+            confirmButton.click();
+        }
+
         // Handle enter key
         if (key === 'Enter' && !shiftKey) {
             event.preventDefault(); // Prevent the default enter behavior
@@ -193,6 +199,7 @@ function updateTextInputDialog() {
     if (title) {
         Elements.textarea.placeholder = `Talk to ${title.textContent}`;
     }
+    Elements.textarea.focus();
 }
 
 function openDialog() {
@@ -207,17 +214,6 @@ function createButton() {
     const floatingButton = document.createElement('button');
     floatingButton.id = 'floating-button';
     floatingButton.textContent = 'Dialog';
-    // floatingButton.style.position = 'absolute';
-    // floatingButton.style.bottom = '10px';
-    // floatingButton.style.right = '10px';
-    // floatingButton.style.padding = '10px 20px';
-    // floatingButton.style.backgroundColor = 'var(--pdl-accent-base)';
-    // floatingButton.style.color = '#fff';
-    // floatingButton.style.border = 'none';
-    // floatingButton.style.borderTopRightRadius = '25px';
-    // floatingButton.style.borderRadius = '25px';
-    // floatingButton.style.cursor = 'pointer';
-    // Add event listeners
     floatingButton.addEventListener('click', openDialog);
     Elements.floatingButton = floatingButton;
 
@@ -226,13 +222,31 @@ function createButton() {
     // box.appendChild(floatingButton);
 }
 
+function submit() {
+    const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
+    const textarea = document.querySelector(q);
+
+    if (textarea) {
+        textarea.focus();
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    setTimeout(() => {
+        const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
+        const button = document.querySelector(qButton);
+        if (button) {
+            button.click();
+        }
+    }, 500);
+}
+
 function confirmed(text) {
     if (!text) return;
     const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
     const textarea = document.querySelector(q);
     if (textarea) {
         textarea.value = text;
-        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        submit();
     }
 }
 
