@@ -1,4 +1,4 @@
-const Elements = {
+let Elements = {
     overlay: null,
     dialog: null,
     textarea: null,
@@ -8,7 +8,7 @@ const Elements = {
     floatingButton: null
 }
 
-const Q = document.querySelector.bind(document);
+const FontFamily = 'HarmonyOS Sans, sans-serif';
 
 function createTextInputDialog(confirmCallback) {
     // Create the overlay
@@ -28,7 +28,7 @@ function createTextInputDialog(confirmCallback) {
     // Create the dialog
     const dialog = document.createElement('div');
     dialog.id = 'dialog';
-    dialog.style.backgroundColor = '#fff';
+    dialog.style.backgroundColor = 'var(--pdl-bg-base)';
     dialog.style.padding = '21px';
     dialog.style.borderRadius = '8px';
     dialog.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.3)';
@@ -55,14 +55,15 @@ function createTextInputDialog(confirmCallback) {
     const textarea = document.createElement('textarea');
     textarea.className = 'GrowingTextArea_textArea__ZWQbP';
     textarea.rows = 5;
-    textarea.placeholder = 'Talk to Claude-3-Sonnet';
+    textarea.background = 'var(--pdl-bg-base) !important';
+    textarea.placeholder = 'Talk to ...';
     textarea.style.width = '100%';
     textarea.style.border = 'none';
     textarea.style.outline = 'none';
     textarea.style.resize = 'none';
     textarea.style.fontSize = '22px';
     textarea.style.lineHeight = '1.5';
-    textarea.style.fontFamily = 'HarmonyOS Sans';
+    textarea.style.fontFamily = FontFamily;
     textarea.style.flexGrow = '1'; // Allow the textarea to grow vertically
     textInput.appendChild(textarea);
 
@@ -74,7 +75,7 @@ function createTextInputDialog(confirmCallback) {
         const { key, shiftKey } = event;
 
         // Handle tab key
-        if (key === 'Tab') {
+        if (key === 'Tab' && !shiftKey) {
             event.preventDefault(); // Prevent the default tab behavior
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
@@ -97,6 +98,16 @@ function createTextInputDialog(confirmCallback) {
             textarea.value = `${textBeforeCursor}\n${whiteSpace}${textAfterCursor}`; // Insert a new line with the same whitespace
             textarea.selectionStart = textarea.selectionEnd = start + whiteSpace.length + 1; // Move the cursor after the whitespace
         }
+
+        //Press ctrl+[-=] to change font size
+        if (key === '-' && event.ctrlKey) {
+            event.preventDefault();
+            textarea.style.fontSize = `${parseInt(textarea.style.fontSize) - 1}px`;
+        } else if (key === '=' && event.ctrlKey) {
+            event.preventDefault();
+            textarea.style.fontSize = `${parseInt(textarea.style.fontSize) + 1}px`;
+        }
+
     });
 
     // Create the button container
@@ -112,6 +123,7 @@ function createTextInputDialog(confirmCallback) {
     cancelButton.style.marginRight = '8px';
     cancelButton.style.padding = '8px 16px';
     cancelButton.style.backgroundColor = '#f2f2f2';
+    cancelButton.style.color = '#333';
     cancelButton.style.border = '1px solid #ccc';
     cancelButton.style.borderRadius = '4px';
     cancelButton.style.cursor = 'pointer';
@@ -163,7 +175,7 @@ function createTextInputDialog(confirmCallback) {
 function updateTextInputDialog() {
     const baseText = document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa textarea').value;
     Elements.textarea.value = baseText || '';
-    const title = Q('p.ChatHeader_overflow__aVkfq');
+    const title = document.querySelector('p.ChatHeader_overflow__aVkfq');
     if (title) {
         Elements.textarea.placeholder = `Talk to ${title.textContent}`;
     }
@@ -206,7 +218,22 @@ function confirmed(text) {
     }
 }
 
+function updateStyleSheet(id, cssText) {
+    let style = document.getElementById(id);
+    if (!style) {
+        style = document.createElement('style');
+        style.id = id;
+        document.head.appendChild(style);
+    }
+    style.textContent = cssText;
+}
+
 
 // Call the function to create the text input dialog
 createTextInputDialog(confirmed);
-createButton(overlay);
+createButton();
+updateStyleSheet('custom-dialog-style', `
+textarea.GrowingTextArea_textArea__ZWQbP {
+    background: var(--pdl-bg-base) !important;
+}
+`);
