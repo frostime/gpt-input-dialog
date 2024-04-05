@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Poe输入对话框
 // @namespace    http://tampermonkey.net/
-// @version      v24.4.13
+// @version      v24.4.14
 // @description 添加一个对话框在 Poe 页面上，方便长文本输入
 // @author       frostime
 // @match        https://poe.com/chat/*
@@ -380,6 +380,16 @@ document.addEventListener('keydown', (event) => {
         event.stopPropagation();
         openDialog();
     }
-});
+
+    //禁止 Enter 直接提交
+    // if (event.key === 'Enter' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
+    //     const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
+    //     let target = event.target;
+    //     if (target.tagName === 'TEXTAREA' && target.className === 'GrowingTextArea_textArea__ZWQbP') {
+    //         event.stopPropagation();
+    //         return;
+    //     }
+    // }
+}, true);
 
 })();
