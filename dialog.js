@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Poe 输入功能增强
 // @namespace    http://tampermonkey.net/
-// @version      v24.4.14
+// @version      v2.0.0
 // @description 添加一个对话框在 Poe 页面上，方便长文本输入
 // @author       frostime
 // @match        https://poe.com/chat/*
@@ -224,6 +224,10 @@ function focusOffcialTextarea() {
 }
 
 function openDialog() {
+    if (Elements.overlay.style.display !== 'none') {
+        return;
+    }
+
     globalThis.inputText = '';
     Elements.overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
