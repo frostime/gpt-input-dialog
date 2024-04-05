@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Poe输入对话框
+// @name         Poe 输入功能增强
 // @namespace    http://tampermonkey.net/
 // @version      v24.4.14
 // @description 添加一个对话框在 Poe 页面上，方便长文本输入
