@@ -224,10 +224,6 @@ function focusOffcialTextarea() {
 }
 
 function openDialog() {
-    if (Elements.overlay.style.display !== 'none') {
-        return;
-    }
-
     globalThis.inputText = '';
     Elements.overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -369,9 +365,14 @@ createButton();
 createStyleSheet();
 
 //监听鼠鼠标
-document.addEventListener('dblclick', () => {
+document.addEventListener('dblclick', (e) => {
     let activeElement = document.activeElement;
     if (activeElement.tagName === 'TEXTAREA' && activeElement.className === 'GrowingTextArea_textArea__ZWQbP') {
+        if (Elements.overlay.style.display !== 'none') {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
         openDialog();
     }
 });
