@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Poe输入对话框
 // @namespace    http://tampermonkey.net/
-// @version      v24.4.11
+// @version      v24.4.13
 // @description 添加一个对话框在 Poe 页面上，方便长文本输入
 // @author       frostime
 // @match        https://poe.com/chat/*
@@ -101,6 +101,12 @@ function createTextInputDialog(confirmCallback) {
         if (key === 'Enter' && event.ctrlKey) {
             event.preventDefault();
             confirmButton.click();
+        }
+
+        //Alt + Enter to fill
+        if (key === 'Enter' && event.altKey) {
+            event.preventDefault();
+            fillButton.click();
         }
 
         // Handle enter key
@@ -238,13 +244,8 @@ function createButton() {
 }
 
 function submit() {
-    const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
-    const textarea = document.querySelector(q);
-
-    if (textarea) {
-        textarea.focus();
-        textarea.dispatchEvent(new Event('input', { bubbles: true }));
-    }
+    // const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
+    // const textarea = document.querySelector(q);
 
     setTimeout(() => {
         const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
@@ -261,6 +262,8 @@ function confirmed(text, doSubmit=false) {
     const textarea = document.querySelector(q);
     if (textarea) {
         textarea.value = text;
+        textarea.focus();
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
         if (doSubmit) {
             submit();
         }
@@ -369,6 +372,14 @@ document.addEventListener('dblclick', () => {
     }
 });
 
-//
+//监听按键
+document.addEventListener('keydown', (event) => {
+    //Alt + S
+    if (event.altKey && event.key === 's') {
+        event.preventDefault();
+        event.stopPropagation();
+        openDialog();
+    }
+});
 
 })();
