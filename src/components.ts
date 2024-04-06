@@ -3,10 +3,11 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-06 20:35:24
+ * @LastEditTime : 2024-04-06 20:46:55
  * @Description  : 
  */
 import { enableTabToIndent } from 'indent-textarea';
+import { insertTextIntoField } from 'text-field-edit';
 import { queryOfficalTextarea, focusOffcialTextarea } from "./utils";
 
 interface IDialogElements {
@@ -44,12 +45,10 @@ const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fil
             // If there is no selection, just insert a newline
             return;
         }
-        event.preventDefault();
         const position = textarea.selectionStart;
 
         //获取 Position 前面的字符
         const textBeforePosition = textarea.value.slice(0, position);
-        const textAfterPosition = textarea.value.slice(position);
 
         let lines = textBeforePosition.split('\n');
         const currentLine = lines[lines.length - 1];
@@ -58,8 +57,11 @@ const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fil
         const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
 
         //新开一行自动缩进
-        textarea.value = `${textBeforePosition}\n${whiteSpace}${textAfterPosition}`;
-        textarea.selectionStart = textarea.selectionEnd = position + 1 + whiteSpace.length;
+        insertTextIntoField(textarea, '\n' + whiteSpace);
+        // textarea.value = `${textBeforePosition}\n${whiteSpace}${textAfterPosition}`;
+        // textarea.selectionStart = textarea.selectionEnd = position + 1 + whiteSpace.length;
+
+        event.preventDefault();
     }
 
     //Press ctrl+[up arrow /down arrow] to change font size
