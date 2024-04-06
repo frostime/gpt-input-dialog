@@ -1,0 +1,13 @@
+{
+    "name": "Poe 输入功能增强",
+    "namespace": "gitlab.com/frostime",
+    "version": "3.2.0",
+    "copyright": "2024, frostime",
+    "match": [
+        "*://poe.com/chat/*",
+        "*://poe.com"
+    ],
+    "icon": "https://www.google.com/s2/favicons?sz=64&domain=poe.com",
+    "grant": "none",
+    "run-at": "document-end"
+}
