@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2023-08-16 17:05:29
  * @FilePath     : /src/utils.ts
- * @LastEditTime : 2024-04-06 15:51:20
+ * @LastEditTime : 2024-04-06 16:15:41
  * @Description  : 
  */
 
@@ -21,6 +21,11 @@ export const queryOfficalTextarea = (): HTMLTextAreaElement | null => {
     const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
     const textarea: HTMLTextAreaElement = document.querySelector(q);
     return textarea;
+}
+
+export const focusOffcialTextarea = () => {
+    const textarea = queryOfficalTextarea();
+    textarea?.focus();
 }
 
 export const StyleSheet = (FontFamily: string) => `

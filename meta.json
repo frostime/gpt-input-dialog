@@ -1,7 +1,7 @@
 {
     "name": "Poe 输入功能增强",
     "namespace": "gitlab.com/frostime",
-    "version": "4.0.0-dev1",
+    "version": "4.1.0",
     "copyright": "2024, frostime",
     "match": [
         "*://poe.com/chat/*",
