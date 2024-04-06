@@ -1,4 +1,4 @@
-import { updateStyleSheet, queryOfficalTextarea } from './utils';
+import { updateStyleSheet, queryOfficalTextarea, StyleSheet } from './utils';
 
 interface Elements {
     overlay: HTMLDivElement | null;
@@ -246,7 +246,7 @@ function submit() {
     }, 500);
 }
 
-function confirmed(text, doSubmit = false) {
+function confirmed(text: string, doSubmit: boolean = false) {
     if (!text) return;
 
     const textarea = queryOfficalTextarea();
@@ -262,88 +262,10 @@ function confirmed(text, doSubmit = false) {
 }
 
 
-function createStyleSheet() {
-    updateStyleSheet('custom-dialog-style', `
-textarea.GrowingTextArea_textArea__ZWQbP {
-    background: var(--pdl-bg-base) !important;
-}
-button#floating-button {
-    position: absolute;
-    right: 50px;
-    bottom: 10px;
-    padding: 10px 20px;
-    background-color: var(--pdl-accent-base);
-    color: #fff;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-}
-div#dialog {
-    background-color: var(--pdl-bg-base);
-    padding: 21px;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    display: flex;
-    width: 50%;
-    flex-direction: column;
-    max-width: 900px;
-    min-width: 400px;
-    height: 500px;
-    max-height: 80%;
-    position: absolute;
-    bottom: 50px;
-}
-div#dialog #dialog-text-input {
-    border: 1px solid var(--pdl-accent-base);
-    border-radius: 4px;
-    padding: 8px;
-    flex-grow: 1; /* Allow the text input area to grow */
-    display: flex; /* Make the text input area a flex container */
-    flex-direction: column; /* Stack child elements vertically */
-}
-div#dialog #dialog-text-input textarea {
-    width: 100%;
-    border: none;
-    outline: none;
-    resize: none;
-    font-size: 22px;
-    line-height: 1.5;
-    font-family: ${FontFamily};
-    flex-grow: 1; /* Allow the textarea to grow vertically */
-}
-
-div#dialog button#cancel-button {
-    margin-right: 8px;
-    padding: 8px 16px;
-    background-color: #f2f2f2;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-}
-div#dialog button#fill-button {
-    margin-right: 8px;
-    padding: 8px 16px;
-    background-color: var(--pdl-accent-base);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-div#dialog button#confirm-button {
-    padding: 8px 16px;
-    background-color: var(--pdl-accent-base);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-    `);
-}
 
 createTextInputDialog(confirmed);
 createButton();
-createStyleSheet();
+updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily));
 
 //监听鼠鼠标
 document.addEventListener('dblclick', (e) => {
