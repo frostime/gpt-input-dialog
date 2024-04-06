@@ -3,21 +3,6 @@ import { TextInputDialog } from './components';
 
 const FontFamily = 'HarmonyOS Sans, sans-serif';
 
-
-function createButton() {
-    // Create the floating button
-    const floatingButton = document.createElement('button');
-    floatingButton.id = 'floating-button';
-    floatingButton.textContent = 'Dialog';
-    floatingButton.addEventListener('click', () => {
-        dialog.show();;
-    });
-
-    // const box = document.querySelector('main.SidebarLayout_main__0ZApe');
-    document.body.appendChild(floatingButton);
-    // box.appendChild(floatingButton);
-}
-
 function submit() {
 
     setTimeout(() => {
@@ -48,8 +33,6 @@ function confirmed(text: string, doSubmit: boolean = false) {
 
 const dialog = new TextInputDialog();
 dialog.bindConfirmCallback(confirmed);
-
-createButton();
 updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily));
 
 //监听鼠鼠标

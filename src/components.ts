@@ -3,12 +3,13 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-06 20:46:55
+ * @LastEditTime : 2024-04-06 21:56:57
  * @Description  : 
  */
 import { enableTabToIndent } from 'indent-textarea';
 import { insertTextIntoField } from 'text-field-edit';
 import { queryOfficalTextarea, focusOffcialTextarea } from "./utils";
+import  { useI18n } from './i18n';
 
 interface IDialogElements {
     textarea: HTMLTextAreaElement;
@@ -93,6 +94,8 @@ export class TextInputDialog {
     }
 
     private buildDialog() {
+        const i18n = useI18n();
+
         const overlay: HTMLDivElement = document.createElement('div');
         overlay.id = 'overlay';
         overlay.style.position = 'fixed';
@@ -143,17 +146,17 @@ export class TextInputDialog {
         // Create the cancel button
         const cancelButton: HTMLButtonElement = document.createElement('button');
         cancelButton.id = 'cancel-button';
-        cancelButton.textContent = '取消';
+        cancelButton.textContent = i18n.cancel;
 
         // Create the confirm button
         const fillButton: HTMLButtonElement = document.createElement('button');
         fillButton.id = 'fill-button';
-        fillButton.textContent = '填充';
+        fillButton.textContent = i18n.fill;
 
         // Create the confirm button
         const confirmButton: HTMLButtonElement = document.createElement('button');
         confirmButton.id = 'confirm-button';
-        confirmButton.textContent = '提交';
+        confirmButton.textContent = i18n.confirm;
 
         // Append buttons to the button container
         buttonContainer.appendChild(cancelButton);
@@ -228,4 +231,19 @@ export class TextInputDialog {
         }
         this.textarea.focus();
     }
+}
+
+
+export function createDialogButton(dialog: TextInputDialog) {
+    // Create the floating button
+    const floatingButton = document.createElement('button');
+    floatingButton.id = 'floating-button';
+    floatingButton.textContent = 'Dialog';
+    floatingButton.addEventListener('click', () => {
+        dialog.show();
+    });
+
+    // const box = document.querySelector('main.SidebarLayout_main__0ZApe');
+    document.body.appendChild(floatingButton);
+    // box.appendChild(floatingButton);
 }
