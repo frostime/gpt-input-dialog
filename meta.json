@@ -1,0 +1,16 @@
+{
+    "namespace": "github.com/frostime",
+    "copyright": "2023, frostime",
+    "require": [
+    ],
+    "match": [
+        "https://github.com/*"
+    ],
+    "grant": [
+        "GM_getValue",
+        "GM_setValue",
+        "GM_log",
+        "GM_addStyle",
+        "GM_xmlhttpRequest"
+    ]
+}
