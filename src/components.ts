@@ -3,11 +3,65 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-06 16:16:48
+ * @LastEditTime : 2024-04-06 20:18:14
  * @Description  : 
  */
 import { enableTabToIndent } from 'indent-textarea';
 import { queryOfficalTextarea, focusOffcialTextarea } from "./utils";
+
+interface IDialogElements {
+    textarea: HTMLTextAreaElement;
+    cancelButton: HTMLButtonElement;
+    fillButton: HTMLButtonElement;
+    confirmButton: HTMLButtonElement;
+  }
+
+const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fillButton, confirmButton }: IDialogElements) => {
+    const { key, shiftKey } = event;
+
+    //Esc to close dialog
+    if (key === 'Escape') {
+        cancelButton.click();
+    }
+
+    //Ctrl + Enter to submit
+    if (key === 'Enter' && event.ctrlKey) {
+        event.preventDefault();
+        confirmButton.click();
+    }
+
+    //Alt + Enter to fill
+    if (key === 'Enter' && event.altKey) {
+        event.preventDefault();
+        fillButton.click();
+    }
+
+    // Handle enter key
+    if (key === 'Enter' && !shiftKey) {
+        event.preventDefault(); // Prevent the default enter behavior
+        const start = textarea.selectionStart;
+        const lines = textarea.value.split('\n');
+        const currentLine = lines[lines.length - 1];
+        //获取当前行前面的空格
+        const whiteSpaceMatch = currentLine.match(/^\s*/);
+        const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
+        const textBeforeCursor = textarea.value.slice(0, start);
+        const textAfterCursor = textarea.value.slice(textarea.selectionEnd);
+        //新开一行自动缩进
+        textarea.value = `${textBeforeCursor}\n${whiteSpace}${textAfterCursor}`;
+        // Move the cursor after the whitespace
+        // textarea.selectionStart = textarea.selectionEnd = start + whiteSpace.length + 1;
+        // textarea.scrollTop = textarea.scrollHeight; // Scroll to the bottom
+    }
+
+    //Press ctrl+[up arrow /down arrow] to change font size
+    if (event.ctrlKey && (key === 'ArrowUp' || key === 'ArrowDown')) {
+        event.preventDefault();
+        const fontSize = parseInt(window.getComputedStyle(textarea).fontSize);
+        const newFontSize = key === 'ArrowUp' ? fontSize + 1 : fontSize - 1;
+        textarea.style.fontSize = `${newFontSize}px`;
+    }
+}
 
 export class TextInputDialog {
 
@@ -62,57 +116,12 @@ export class TextInputDialog {
         this.textarea = textarea;
 
         //show space inside textarea
-        // textarea.style.whiteSpace = 'pre-wrap';
+        textarea.style.whiteSpace = 'pre-wrap';
 
-        // Handle tab and enter key events
         textarea.addEventListener('keydown', (event: KeyboardEvent) => {
-            const { key, shiftKey } = event;
-
-            //Esc to close dialog
-            if (key === 'Escape') {
-                cancelButton.click();
-            }
-
-            //Ctrl + Enter to submit
-            if (key === 'Enter' && event.ctrlKey) {
-                event.preventDefault();
-                confirmButton.click();
-            }
-
-            //Alt + Enter to fill
-            if (key === 'Enter' && event.altKey) {
-                event.preventDefault();
-                fillButton.click();
-            }
-
-            // Handle enter key
-            if (key === 'Enter' && !shiftKey) {
-                event.preventDefault(); // Prevent the default enter behavior
-                const start = textarea.selectionStart;
-                const lines = textarea.value.split('\n');
-                const currentLine = lines[lines.length - 1];
-                //获取当前行前面的空格
-                const whiteSpaceMatch = currentLine.match(/^\s*/);
-                const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
-                const textBeforeCursor = textarea.value.slice(0, start);
-                const textAfterCursor = textarea.value.slice(textarea.selectionEnd);
-                //新开一行自动缩进
-                textarea.value = `${textBeforeCursor}\n${whiteSpace}${textAfterCursor}`;
-                // Move the cursor after the whitespace
-                // textarea.selectionStart = textarea.selectionEnd = start + whiteSpace.length + 1;
-                // textarea.scrollTop = textarea.scrollHeight; // Scroll to the bottom
-            }
-
-            //Press ctrl+[up arrow /down arrow] to change font size
-            if (event.ctrlKey && (key === 'ArrowUp' || key === 'ArrowDown')) {
-                event.preventDefault();
-                const fontSize = parseInt(window.getComputedStyle(textarea).fontSize);
-                const newFontSize = key === 'ArrowUp' ? fontSize + 1 : fontSize - 1;
-                textarea.style.fontSize = `${newFontSize}px`;
-            }
-
+            KeydownEventHandler(event, this);
         });
-
+        //优先自定义的事件处理，以防止被 preventDefault
         enableTabToIndent(textarea);
 
         // Create the button container
