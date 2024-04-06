@@ -42,5 +42,8 @@
     },
     "config": {
         "port": "8124"
+    },
+    "dependencies": {
+        "indent-textarea": "^4.0.0"
     }
 }

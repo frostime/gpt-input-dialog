@@ -1,3 +1,5 @@
+import { enableTabToIndent } from 'indent-textarea';
+
 import { updateStyleSheet, queryOfficalTextarea, StyleSheet } from './utils';
 
 interface Elements {
@@ -52,7 +54,7 @@ function createTextInputDialog(confirmCallback: (text: string, doSubmit: boolean
     textInput.appendChild(textarea);
 
     //show space inside textarea
-    textarea.style.whiteSpace = 'pre-wrap';
+    // textarea.style.whiteSpace = 'pre-wrap';
 
     // Handle tab and enter key events
     textarea.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -61,35 +63,6 @@ function createTextInputDialog(confirmCallback: (text: string, doSubmit: boolean
         //Esc to close dialog
         if (key === 'Escape') {
             cancelButton.click();
-        }
-
-        // Handle tab key
-        if (key === 'Tab' && !shiftKey) {
-            event.preventDefault();
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const textBeforeCursor = textarea.value.slice(0, start);
-            const textAfterCursor = textarea.value.slice(end);
-            textarea.value = `${textBeforeCursor}    ${textAfterCursor}`; // Insert 4 spaces
-            textarea.selectionStart = textarea.selectionEnd = start + 4; // Move the cursor 4 positions forward
-        }
-
-        // Shift+Tab to unindent the text
-        if (key === 'Tab' && shiftKey) {
-            event.preventDefault();
-            const start = textarea.selectionStart;
-            // const end = textarea.selectionEnd;
-            const lines = textarea.value.split('\n');
-            const currentLineNumber = textarea.value.slice(0, start).split('\n').length - 1;
-            const currentLine = lines[currentLineNumber];
-            const whiteSpaceMatch = currentLine.match(/^(\t| {4})/);
-            const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
-            const textBeforeCurrentLine = lines.slice(0, currentLineNumber).join('\n');
-            const textAfterCurrentLine = lines.slice(currentLineNumber + 1).join('\n');
-            const updatedCurrentLine = currentLine.replace(/^(\t| {4})/, '');
-            const updatedValue = `${textBeforeCurrentLine}\n${updatedCurrentLine}\n${textAfterCurrentLine}`;
-            textarea.value = updatedValue;
-            textarea.selectionStart = textarea.selectionEnd = start - whiteSpace.length;
         }
 
         //Ctrl + Enter to submit
@@ -118,8 +91,8 @@ function createTextInputDialog(confirmCallback: (text: string, doSubmit: boolean
             //新开一行自动缩进
             textarea.value = `${textBeforeCursor}\n${whiteSpace}${textAfterCursor}`;
             // Move the cursor after the whitespace
-            textarea.selectionStart = textarea.selectionEnd = start + whiteSpace.length + 1;
-            textarea.scrollTop = textarea.scrollHeight; // Scroll to the bottom
+            // textarea.selectionStart = textarea.selectionEnd = start + whiteSpace.length + 1;
+            // textarea.scrollTop = textarea.scrollHeight; // Scroll to the bottom
         }
 
         //Press ctrl+[up arrow /down arrow] to change font size
@@ -131,6 +104,8 @@ function createTextInputDialog(confirmCallback: (text: string, doSubmit: boolean
         }
 
     });
+
+    enableTabToIndent(textarea);
 
     // Create the button container
     const buttonContainer: HTMLDivElement = document.createElement('div');
