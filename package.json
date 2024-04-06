@@ -1,7 +1,5 @@
 {
-    "name": "rollup-userscript-template",
-    "version": "0.1.0",
-    "description": "Bundle typescript, into a single userscript file with rollup",
+    "name": "poe-enhanced-dialog",
     "keywords": [
         "userscript",
         "greasemonkey",
@@ -10,7 +8,8 @@
         "typescript"
     ],
     "author": "frostime",
-    "license": "MIT",
+    "description": "添加一个对话框在 Poe 页面上，方便长文本输入",
+    "license": "AGPL-3.0-only",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "npx rollup --config rollup.config.mjs",

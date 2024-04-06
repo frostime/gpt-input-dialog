@@ -1,16 +1,13 @@
 {
-    "namespace": "github.com/frostime",
-    "copyright": "2023, frostime",
-    "require": [
-    ],
+    "name": "Poe 输入功能增强",
+    "namespace": "gitlab.com/frostime",
+    "version": "3.0.0-dev1",
+    "copyright": "2024, frostime",
     "match": [
-        "https://github.com/*"
+        "*://poe.com/chat/*",
+        "*://poe.com"
     ],
-    "grant": [
-        "GM_getValue",
-        "GM_setValue",
-        "GM_log",
-        "GM_addStyle",
-        "GM_xmlhttpRequest"
-    ]
+    "icon": "https://www.google.com/s2/favicons?sz=64&domain=poe.com",
+    "grant": "none",
+    "run-at": "document-end"
 }

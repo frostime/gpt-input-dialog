@@ -44,9 +44,9 @@ export default {
     metablock({
       file: './meta.json',
       override: {
-        name: pkg.name,
-        version: pkg.version,
-        description: pkg.description,
+        // name: pkg.name,
+        // version: pkg.version,
+        // description: pkg.description,
         homepage: pkg.homepage,
         author: pkg.author,
         license: pkg.license
