@@ -200,7 +200,7 @@ function updateTextInputDialog() {
     //dialog 和 column 中心对齐
     Elements.dialog.style.left = `${column.offsetLeft + column.offsetWidth / 2 - Elements.dialog.offsetWidth / 2}px`;
 
-    const baseText: string | null = (<HTMLTextAreaElement>document.querySelector('div.ChatMessageInputContainer_inputContainer__s2AGa textarea')).value;
+    const baseText: string | null = queryOfficalTextarea()?.value;
     Elements.textarea.value = baseText || '';
     const title = document.querySelector('p.ChatHeader_overflow__aVkfq');
     if (title) {
@@ -236,8 +236,6 @@ function createButton() {
 }
 
 function submit() {
-    // const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
-    // const textarea = document.querySelector(q);
 
     setTimeout(() => {
         const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
@@ -250,8 +248,8 @@ function submit() {
 
 function confirmed(text, doSubmit = false) {
     if (!text) return;
-    const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
-    const textarea: HTMLTextAreaElement = document.querySelector(q);
+
+    const textarea = queryOfficalTextarea();
     if (textarea) {
         textarea.value = text;
         textarea.focus();

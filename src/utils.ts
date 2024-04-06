@@ -3,7 +3,7 @@
  * @Author       : Yp Z
  * @Date         : 2023-08-16 17:05:29
  * @FilePath     : /src/utils.ts
- * @LastEditTime : 2024-04-06 15:42:02
+ * @LastEditTime : 2024-04-06 15:46:51
  * @Description  : 
  */
 // export async function httpRequest<CONTEXT_TYPE>(payload: IHttpRequestPayload<CONTEXT_TYPE>): Promise<GM_Types.XHRResponse<any>> {
@@ -27,7 +27,7 @@ export function updateStyleSheet(id: string, cssText: string) {
     style.textContent = cssText;
 }
 
-export const queryOfficalTextarea = () => {
+export const queryOfficalTextarea = (): HTMLTextAreaElement | null => {
     const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
     const textarea: HTMLTextAreaElement = document.querySelector(q);
     return textarea;
