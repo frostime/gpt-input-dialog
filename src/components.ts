@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-06 20:18:14
+ * @LastEditTime : 2024-04-06 20:35:24
  * @Description  : 
  */
 import { enableTabToIndent } from 'indent-textarea';
@@ -36,22 +36,30 @@ const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fil
         fillButton.click();
     }
 
-    // Handle enter key
+    // Handle enter key, 自动跟随缩进
     if (key === 'Enter' && !shiftKey) {
-        event.preventDefault(); // Prevent the default enter behavior
         const start = textarea.selectionStart;
-        const lines = textarea.value.split('\n');
+        const end = textarea.selectionEnd;
+        if (start !== end) {
+            // If there is no selection, just insert a newline
+            return;
+        }
+        event.preventDefault();
+        const position = textarea.selectionStart;
+
+        //获取 Position 前面的字符
+        const textBeforePosition = textarea.value.slice(0, position);
+        const textAfterPosition = textarea.value.slice(position);
+
+        let lines = textBeforePosition.split('\n');
         const currentLine = lines[lines.length - 1];
         //获取当前行前面的空格
         const whiteSpaceMatch = currentLine.match(/^\s*/);
         const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
-        const textBeforeCursor = textarea.value.slice(0, start);
-        const textAfterCursor = textarea.value.slice(textarea.selectionEnd);
+
         //新开一行自动缩进
-        textarea.value = `${textBeforeCursor}\n${whiteSpace}${textAfterCursor}`;
-        // Move the cursor after the whitespace
-        // textarea.selectionStart = textarea.selectionEnd = start + whiteSpace.length + 1;
-        // textarea.scrollTop = textarea.scrollHeight; // Scroll to the bottom
+        textarea.value = `${textBeforePosition}\n${whiteSpace}${textAfterPosition}`;
+        textarea.selectionStart = textarea.selectionEnd = position + 1 + whiteSpace.length;
     }
 
     //Press ctrl+[up arrow /down arrow] to change font size
