@@ -1,3 +1,5 @@
+import { updateStyleSheet, queryOfficalTextarea } from './utils';
+
 interface Elements {
     overlay: HTMLDivElement | null;
     dialog: HTMLDivElement | null;
@@ -208,11 +210,8 @@ function updateTextInputDialog() {
 }
 
 function focusOffcialTextarea() {
-    const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
-    const textarea: HTMLTextAreaElement = document.querySelector(q);
-    if (textarea) {
-        textarea.focus();
-    }
+    const textarea = queryOfficalTextarea();
+    textarea?.focus();
 
 }
 
@@ -264,15 +263,6 @@ function confirmed(text, doSubmit = false) {
     focusOffcialTextarea();
 }
 
-function updateStyleSheet(id: string, cssText: string) {
-    let style = document.getElementById(id);
-    if (!style) {
-        style = document.createElement('style');
-        style.id = id;
-        document.head.appendChild(style);
-    }
-    style.textContent = cssText;
-}
 
 function createStyleSheet() {
     updateStyleSheet('custom-dialog-style', `
