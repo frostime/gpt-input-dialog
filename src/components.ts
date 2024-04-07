@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-06 21:56:57
+ * @LastEditTime : 2024-04-07 16:31:38
  * @Description  : 
  */
 import { enableTabToIndent } from 'indent-textarea';
@@ -57,8 +57,12 @@ const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fil
         const whiteSpaceMatch = currentLine.match(/^\s*/);
         const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
 
+        //获取当前行的开头是否满足 markdown 列表语法 -, +, *
+        const listMatch = currentLine.trim().match(/^[-+*]\s/);
+        const headingChar = listMatch ? listMatch[0] : '';
+
         //新开一行自动缩进
-        insertTextIntoField(textarea, '\n' + whiteSpace);
+        insertTextIntoField(textarea, `\n${whiteSpace}${headingChar}`);
         // textarea.value = `${textBeforePosition}\n${whiteSpace}${textAfterPosition}`;
         // textarea.selectionStart = textarea.selectionEnd = position + 1 + whiteSpace.length;
 
