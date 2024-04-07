@@ -8,7 +8,7 @@
  */
 import { enableTabToIndent, unindentSelection } from './indent-textarea';
 import { insertTextIntoField } from 'text-field-edit';
-import { queryOfficalTextarea, focusOffcialTextarea } from "./utils";
+import { queryOfficalTextarea, focusOffcialTextarea, splitTextareaLines } from "./utils";
 import { useI18n } from './i18n';
 
 interface IDialogElements {
@@ -18,24 +18,6 @@ interface IDialogElements {
     confirmButton: HTMLButtonElement;
 }
 
-/**
- * 分割 textarea 的行
- * @param textarea HTMLTextAreaElement
- * @param position number
- * @returns
- *  - befores: string[], position 之前的行
- *  - line: string, position 所在的行
- *  - afters: string[], position 之后的行
- */
-const splitTextareaLines = (textarea: HTMLTextAreaElement, position) => {
-    const text = textarea.value;
-    const befores = text.slice(0, position).split('\n');
-    const afters = text.slice(position).split('\n');
-
-    const line = befores.pop() + afters.shift();
-
-    return { befores, line, afters };
-}
 
 const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fillButton, confirmButton }: IDialogElements) => {
     const { key, shiftKey } = event;

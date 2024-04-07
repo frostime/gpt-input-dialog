@@ -3,9 +3,37 @@
  * @Author       : frostime
  * @Date         : 2023-08-16 17:05:29
  * @FilePath     : /src/utils.ts
- * @LastEditTime : 2024-04-06 16:15:41
+ * @LastEditTime : 2024-04-07 17:14:47
  * @Description  : 
  */
+
+/**
+ * 分割 textarea 的行
+ * @param textarea HTMLTextAreaElement
+ * @param position number - The position index to split the text at
+ * @returns
+ *  - befores: string[], position 之前的行
+ *  - line: string, position 所在的行
+ *  - afters: string[], position 之后的行
+ */
+export const splitTextareaLines = (textarea: HTMLTextAreaElement, position: number) => {
+    const text = textarea.value;
+
+    // Guard against positions out of bounds
+    if (position < 0 || position > text.length) {
+        throw new Error('Position is out of bounds of the text length');
+    }
+
+    const befores = text.slice(0, position).split('\n');
+    const afters = text.slice(position).split('\n');
+
+    // Safely concatenate the current line, even if pop or shift return undefined
+    const currentLineBefore = befores.pop() ?? '';
+    const currentLineAfter = afters.shift() ?? '';
+    const line = currentLineBefore + currentLineAfter;
+
+    return { befores, line, afters };
+}
 
 export function updateStyleSheet(id: string, cssText: string) {
     let style = document.getElementById(id);
