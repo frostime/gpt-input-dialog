@@ -39,7 +39,7 @@ export function indentSelection(element: HTMLTextAreaElement): void {
         const newSelection = element.value.slice(firstLineStart, selectionEnd - 1);
         const indentedText = newSelection.replaceAll(
             /^|\n/g, // Match all line starts
-            '$&\t',
+            '$&    ',
         );
         const replacementsCount = indentedText.length - newSelection.length;
 
@@ -48,9 +48,9 @@ export function indentSelection(element: HTMLTextAreaElement): void {
         insertTextIntoField(element, indentedText);
 
         // Restore selection position, including the indentation
-        element.setSelectionRange(selectionStart + 1, selectionEnd + replacementsCount);
+        element.setSelectionRange(selectionStart + 4, selectionEnd + replacementsCount);
     } else {
-        insertTextIntoField(element, '\t');
+        insertTextIntoField(element, '    ');
     }
 }
 
@@ -77,7 +77,7 @@ export function unindentSelection(element: HTMLTextAreaElement): void {
 
     const newSelection = element.value.slice(firstLineStart, minimumSelectionEnd);
     const indentedText = newSelection.replaceAll(
-        /(^|\n)(\t| {1,2})/g,
+        /(^|\n)(\t| {1,4})/g,
         '$1',
     );
     const replacementsCount = newSelection.length - indentedText.length;
@@ -86,8 +86,8 @@ export function unindentSelection(element: HTMLTextAreaElement): void {
     element.setSelectionRange(firstLineStart, minimumSelectionEnd);
     insertTextIntoField(element, indentedText);
 
-    // Restore selection position, including the indentation
-    const firstLineIndentation = /\t| {1,2}/.exec(value.slice(firstLineStart, selectionStart));
+    
+    const firstLineIndentation = /\t| {1,4}/.exec(value.slice(firstLineStart, selectionStart));
 
     const difference = firstLineIndentation
         ? firstLineIndentation[0]!.length
