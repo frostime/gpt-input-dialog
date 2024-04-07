@@ -3,10 +3,10 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-07 16:43:06
+ * @LastEditTime : 2024-04-07 17:04:01
  * @Description  : 
  */
-import { enableTabToIndent } from './indent-textarea';
+import { enableTabToIndent, unindentSelection } from './indent-textarea';
 import { insertTextIntoField } from 'text-field-edit';
 import { queryOfficalTextarea, focusOffcialTextarea } from "./utils";
 import { useI18n } from './i18n';
@@ -30,8 +30,10 @@ interface IDialogElements {
 const splitTextareaLines = (textarea: HTMLTextAreaElement, position) => {
     const text = textarea.value;
     const befores = text.slice(0, position).split('\n');
-    const line = befores.pop();
     const afters = text.slice(position).split('\n');
+
+    const line = befores.pop() + afters.shift();
+
     return { befores, line, afters };
 }
 
@@ -78,6 +80,21 @@ const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fil
         insertTextIntoField(textarea, `\n${whiteSpace}`);
 
         event.preventDefault();
+    }
+
+    //Delete key, 对于空行做 unindent 处理
+    if (key === 'Backspace' && textarea.selectionStart === textarea.selectionEnd) {
+        const position = textarea.selectionStart;
+        if (position === 0) return;
+
+        const { line } = splitTextareaLines(textarea, position);
+        if (line === '') return;
+
+        if (line.trim() === '') {
+            event.preventDefault();
+            // event.stopPropagation();
+            unindentSelection(textarea);
+        }
     }
 
     //Press ctrl+[up arrow /down arrow] to change font size
