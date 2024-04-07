@@ -3,20 +3,37 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-07 16:31:38
+ * @LastEditTime : 2024-04-07 16:43:06
  * @Description  : 
  */
-import { enableTabToIndent } from 'indent-textarea';
+import { enableTabToIndent } from './indent-textarea';
 import { insertTextIntoField } from 'text-field-edit';
 import { queryOfficalTextarea, focusOffcialTextarea } from "./utils";
-import  { useI18n } from './i18n';
+import { useI18n } from './i18n';
 
 interface IDialogElements {
     textarea: HTMLTextAreaElement;
     cancelButton: HTMLButtonElement;
     fillButton: HTMLButtonElement;
     confirmButton: HTMLButtonElement;
-  }
+}
+
+/**
+ * 分割 textarea 的行
+ * @param textarea HTMLTextAreaElement
+ * @param position number
+ * @returns
+ *  - befores: string[], position 之前的行
+ *  - line: string, position 所在的行
+ *  - afters: string[], position 之后的行
+ */
+const splitTextareaLines = (textarea: HTMLTextAreaElement, position) => {
+    const text = textarea.value;
+    const befores = text.slice(0, position).split('\n');
+    const line = befores.pop();
+    const afters = text.slice(position).split('\n');
+    return { befores, line, afters };
+}
 
 const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fillButton, confirmButton }: IDialogElements) => {
     const { key, shiftKey } = event;
@@ -48,23 +65,17 @@ const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fil
         }
         const position = textarea.selectionStart;
 
-        //获取 Position 前面的字符
-        const textBeforePosition = textarea.value.slice(0, position);
-
-        let lines = textBeforePosition.split('\n');
-        const currentLine = lines[lines.length - 1];
+        const { befores, line, afters } = splitTextareaLines(textarea, position);
         //获取当前行前面的空格
-        const whiteSpaceMatch = currentLine.match(/^\s*/);
+        const whiteSpaceMatch = line.match(/^\s*/);
         const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
 
-        //获取当前行的开头是否满足 markdown 列表语法 -, +, *
-        const listMatch = currentLine.trim().match(/^[-+*]\s/);
-        const headingChar = listMatch ? listMatch[0] : '';
+        // //获取当前行的开头是否满足 markdown 列表语法 -, +, *
+        // const listMatch = currentLine.trim().match(/^[-+*]\s/);
+        // const headingChar = listMatch ? listMatch[0] : '';
 
         //新开一行自动缩进
-        insertTextIntoField(textarea, `\n${whiteSpace}${headingChar}`);
-        // textarea.value = `${textBeforePosition}\n${whiteSpace}${textAfterPosition}`;
-        // textarea.selectionStart = textarea.selectionEnd = position + 1 + whiteSpace.length;
+        insertTextIntoField(textarea, `\n${whiteSpace}`);
 
         event.preventDefault();
     }
