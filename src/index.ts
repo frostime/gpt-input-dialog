@@ -1,7 +1,15 @@
+/*
+ * Copyright (c) 2024 by frostime. All Rights Reserved.
+ * @Author       : frostime
+ * @Date         : 2024-04-06 15:54:15
+ * @FilePath     : /src/index.ts
+ * @LastEditTime : 2024-04-08 13:18:50
+ * @Description  : Poe long input dialog
+ */
 import { updateStyleSheet, queryOfficalTextarea, focusOffcialTextarea, StyleSheet } from './utils';
 import { TextInputDialog } from './components';
 
-const FontFamily = 'HarmonyOS Sans, sans-serif';
+const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei, Arial, sans-serif';
 
 function submit() {
 
