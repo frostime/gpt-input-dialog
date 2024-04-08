@@ -500,7 +500,15 @@ div#dialog button#confirm-button {
         }
     }
 
-    const FontFamily = 'HarmonyOS Sans, sans-serif';
+    /*
+     * Copyright (c) 2024 by frostime. All Rights Reserved.
+     * @Author       : frostime
+     * @Date         : 2024-04-06 15:54:15
+     * @FilePath     : /src/index.ts
+     * @LastEditTime : 2024-04-08 13:18:50
+     * @Description  : Poe long input dialog
+     */
+    const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei, Arial, sans-serif';
     function submit() {
         setTimeout(() => {
             const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
