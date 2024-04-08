@@ -5,15 +5,15 @@ interface I18n {
 };
 
 const zhCN: I18n = {
-    cancel: '取消',
-    fill: '填充',
-    confirm: '提交',
+    cancel: '取消[Esc]',
+    fill: '填充[Alt+Enter]',
+    confirm: '提交[Ctrl+Enter]',
 };
 
 const enUS: I18n = {
-    cancel: 'Cancel',
-    fill: 'Fill',
-    confirm: 'Submit',
+    cancel: 'Cancel[Esc]',
+    fill: 'Fill[Alt+Enter]',
+    confirm: 'Submit[Ctrl+Enter]',
 };
 
 export const useI18n = (): I18n => {
