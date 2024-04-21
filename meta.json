@@ -1,13 +1,15 @@
 {
     "name": "GPT 网站对话框",
     "namespace": "gitlab.com/frostime",
-    "version": "5.1.0",
+    "version": "5.2.0",
     "copyright": "2024, frostime",
     "match": [
         "*://poe.com/chat/*",
         "*://poe.com",
         "*://chat.mistral.ai/chat",
-        "*://chat.mistral.ai/chat/*"
+        "*://chat.mistral.ai/chat/*",
+        "*://kimi.moonshot.cn",
+        "*://kimi.moonshot.cn/chat/*"
     ],
     "icon": "https://www.google.com/s2/favicons?sz=64&domain=poe.com",
     "grant": ["GM.xmlHttpRequest"],

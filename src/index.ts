@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-04-21 17:27:27
+ * @LastEditTime : 2024-04-21 17:48:04
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -29,7 +29,11 @@ function confirmed(text: string, doSubmit: boolean = false) {
 
     const textarea = queryOfficalTextarea();
     if (textarea) {
-        textarea.value = text;
+        if (platform.currentPlatform.setText) {
+            platform.currentPlatform.setText(text);
+        } else {
+            textarea.value = text;
+        }
         textarea.focus();
         textarea.dispatchEvent(new Event('input', { bubbles: true }));
         if (doSubmit) {

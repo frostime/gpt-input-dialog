@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name      GPT 网站对话框
 // @namespace gitlab.com/frostime
-// @version   5.1.0
+// @version   5.2.0
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
 // @match     *://chat.mistral.ai/chat
 // @match     *://chat.mistral.ai/chat/*
+// @match     *://kimi.moonshot.cn
+// @match     *://kimi.moonshot.cn/chat/*
 // @icon      https://www.google.com/s2/favicons?sz=64&domain=poe.com
 // @run-at    document-end
 // @author    frostime
@@ -15,6 +17,14 @@
 (function () {
     'use strict';
 
+    /*
+     * Copyright (c) 2024 by frostime. All Rights Reserved.
+     * @Author       : frostime
+     * @Date         : 2024-04-21 17:17:02
+     * @FilePath     : /src/platform.ts
+     * @LastEditTime : 2024-04-21 17:51:17
+     * @Description  :
+     */
     const Poe = {
         name: 'Poe',
         baseUrl: 'poe.com',
@@ -38,7 +48,7 @@
     };
     const Mistral = {
         name: 'Mistral',
-        baseUrl: 'chat.mistral.ai',
+        baseUrl: 'chat.mistral.ai/chat',
         selector: {
             officialTextarea: 'div.flex.flex-row.items-start>textarea',
             submitButton: 'div.flex.flex-row.items-start>textarea + button',
@@ -57,13 +67,50 @@
             return textarea;
         }
     };
+    const Kimi = {
+        name: 'Kimi',
+        baseUrl: 'kimi.moonshot.cn',
+        selector: {
+            officialTextarea: 'div.editor___KShcc>div[role="textbox"]',
+            submitButton: 'button#send-button',
+            chatSessionTitle: 'div.chatHeader___mPWFf>span.title___Jbjbz css-kjohby',
+        },
+        css: {
+            backgroundColor: 'var(--background-default)',
+            primaryColor: 'var(--msh-button-primary-bg)',
+        },
+        createTextarea: () => {
+            const textarea = document.createElement('textarea');
+            // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
+            // textarea.rows = 5;
+            textarea.placeholder = 'Talk to ...';
+            return textarea;
+        },
+        getText: () => {
+            const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
+            return officialTextarea ? officialTextarea.textContent : '';
+        },
+        setText: (text) => {
+            // let doms = [];
+            // let lines = text.split('\n');
+            // for (let line of lines) {
+            //     const dom = `<div data-slate-node="element"><span data-slate-node="text"><span data-slate-leaf="true"><span data-slate-string="true">${line}</span></span></span></div>`;
+            //     doms.push(dom);
+            // }
+            const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
+            // officialTextarea.innerHTML = doms.join('\n');
+            //js 模拟 keyboard 粘贴
+            officialTextarea.textContent = text;
+        }
+    };
+    const Platforms = [Poe, Mistral, Kimi];
     let currentPlatform;
     let togglePlatform = (name) => {
-        if (name === 'Poe') {
-            currentPlatform = Poe;
-        }
-        else if (name === 'Mistral') {
-            currentPlatform = Mistral;
+        for (let p of Platforms) {
+            if (p.name === name) {
+                currentPlatform = p;
+                break;
+            }
         }
     };
 
@@ -368,7 +415,7 @@ div#dialog button#confirm-button {
      * @Author       : frostime
      * @Date         : 2024-04-06 16:08:53
      * @FilePath     : /src/components.ts
-     * @LastEditTime : 2024-04-21 16:39:41
+     * @LastEditTime : 2024-04-21 17:39:22
      * @Description  :
      */
     const KeydownEventHandler = (event, { textarea, cancelButton, fillButton, confirmButton }) => {
@@ -541,8 +588,13 @@ div#dialog button#confirm-button {
             // const column: HTMLDivElement | null = document.querySelector('.MainColumn_column__UEunw');
             // //dialog 和 column 中心对齐
             // this.dialog.style.left = `${column.offsetLeft + column.offsetWidth / 2 - this.dialog.offsetWidth / 2}px`;
-            const baseText = queryOfficalTextarea()?.value;
-            this.textarea.value = baseText || '';
+            if (currentPlatform.getText === undefined) {
+                const baseText = queryOfficalTextarea()?.value;
+                this.textarea.value = baseText || '';
+            }
+            else {
+                this.textarea.value = currentPlatform.getText();
+            }
             const title = document.querySelector(currentPlatform.selector.chatSessionTitle);
             if (title) {
                 this.textarea.placeholder = `Talk to ${title.textContent}`;
@@ -556,7 +608,7 @@ div#dialog button#confirm-button {
      * @Author       : frostime
      * @Date         : 2024-04-06 15:54:15
      * @FilePath     : /src/index.ts
-     * @LastEditTime : 2024-04-21 17:07:08
+     * @LastEditTime : 2024-04-21 17:48:04
      * @Description  : Poe long input dialog
      */
     const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei, Arial, sans-serif';
@@ -575,7 +627,12 @@ div#dialog button#confirm-button {
             return;
         const textarea = queryOfficalTextarea();
         if (textarea) {
-            textarea.value = text;
+            if (currentPlatform.setText) {
+                currentPlatform.setText(text);
+            }
+            else {
+                textarea.value = text;
+            }
             textarea.focus();
             textarea.dispatchEvent(new Event('input', { bubbles: true }));
             if (doSubmit) {
@@ -585,11 +642,11 @@ div#dialog button#confirm-button {
         focusOffcialTextarea();
     }
     const url = window.location.href;
-    if (url.includes('poe.com')) {
-        togglePlatform('Poe');
-    }
-    else if (url.includes('chat.mistral.ai/chat')) {
-        togglePlatform('Mistral');
+    for (let p of Platforms) {
+        if (url.includes(p.baseUrl)) {
+            togglePlatform(p.name);
+            break;
+        }
     }
     const dialog = new TextInputDialog();
     dialog.bindConfirmCallback(confirmed);

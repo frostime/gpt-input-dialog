@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-21 16:39:41
+ * @LastEditTime : 2024-04-21 17:39:22
  * @Description  : 
  */
 import { enableTabToIndent, unindentSelection } from './indent-textarea';
@@ -235,8 +235,13 @@ export class TextInputDialog {
         // //dialog 和 column 中心对齐
         // this.dialog.style.left = `${column.offsetLeft + column.offsetWidth / 2 - this.dialog.offsetWidth / 2}px`;
 
-        const baseText: string | null = queryOfficalTextarea()?.value;
-        this.textarea.value = baseText || '';
+        if (platform.currentPlatform.getText === undefined) {
+            const baseText: string | null = queryOfficalTextarea()?.value;
+            this.textarea.value = baseText || '';
+        } else {
+            this.textarea.value = platform.currentPlatform.getText();
+        }
+
         const title = document.querySelector(platform.currentPlatform.selector.chatSessionTitle);
         if (title) {
             this.textarea.placeholder = `Talk to ${title.textContent}`;
