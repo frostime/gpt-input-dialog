@@ -1,9 +1,10 @@
 // ==UserScript==
-// @name      Poe 输入功能增强
+// @name      GPT 网站对话框
 // @namespace gitlab.com/frostime
 // @version   5.1.0
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
+// @match     *://chat.mistral.ai/chat
 // @match     *://chat.mistral.ai/chat/*
 // @icon      https://www.google.com/s2/favicons?sz=64&domain=poe.com
 // @run-at    document-end
