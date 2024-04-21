@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-04-08 13:18:50
+ * @LastEditTime : 2024-04-21 16:31:01
  * @Description  : Poe long input dialog
  */
 import { updateStyleSheet, queryOfficalTextarea, focusOffcialTextarea, StyleSheet } from './utils';
@@ -44,14 +44,14 @@ dialog.bindConfirmCallback(confirmed);
 updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily));
 
 //监听鼠鼠标
-document.addEventListener('dblclick', (e) => {
-    let activeElement = document.activeElement;
-    if (activeElement.tagName === 'TEXTAREA' && activeElement.className === 'GrowingTextArea_textArea__ZWQbP') {
-        e.preventDefault();
-        e.stopPropagation();
-        dialog.show();
-    }
-});
+// document.addEventListener('dblclick', (e) => {
+//     let activeElement = document.activeElement;
+//     if (activeElement.tagName === 'TEXTAREA' && activeElement.className === 'GrowingTextArea_textArea__ZWQbP') {
+//         e.preventDefault();
+//         e.stopPropagation();
+//         dialog.show();
+//     }
+// });
 
 //监听按键
 document.addEventListener('keydown', (event) => {
