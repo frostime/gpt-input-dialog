@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-04-21 17:52:35
+ * @LastEditTime : 2024-04-21 17:54:26
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -35,7 +35,7 @@ const Mistral: IPlatform = {
     selector: {
         officialTextarea: 'div.flex.flex-row.items-start>textarea',
         submitButton: 'div.flex.flex-row.items-start>textarea + button',
-        chatSessionTitle: 'div.flex.w-full>p.blocl.truncate',
+        chatSessionTitle: 'div.flex.w-full>p.block.truncate',
     },
     css: {
         backgroundColor: 'hsl(var(--background))',
@@ -58,7 +58,7 @@ const Kimi: IPlatform = {
     selector: {
         officialTextarea: 'div.editor___KShcc>div[role="textbox"]',
         submitButton: 'button#send-button',
-        chatSessionTitle: 'div.chatHeader___mPWFf>span.title___Jbjbz css-kjohby',
+        chatSessionTitle: 'div.chatHeader___mPWFf>span.title___Jbjbz',
     },
     css: {
         backgroundColor: 'var(--background-default)',
