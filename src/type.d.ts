@@ -3,7 +3,7 @@
  * @Author       : Yp Z
  * @Date         : 2023-08-16 17:13:02
  * @FilePath     : /src/type.d.ts
- * @LastEditTime : 2023-08-16 17:15:04
+ * @LastEditTime : 2024-04-21 16:37:31
  * @Description  : 
  */
 interface IHttpRequestPayload<CONTEXT_TYPE> {
@@ -20,4 +20,19 @@ interface IHttpRequestPayload<CONTEXT_TYPE> {
     fetch?: boolean,
     username?: string,
     password?: string,
+}
+
+interface IPlatform {
+    name: string;
+    baseUrl: string;
+    selector: {
+        officialTextarea: string;
+        submitButton: string;
+        chatSessionTitle: string;
+    };
+    css: {
+        backgroundColor: string;
+        primaryColor: string;
+    };
+    createTextarea: () => HTMLTextAreaElement;
 }
