@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-04-21 17:07:08
+ * @LastEditTime : 2024-04-21 17:27:27
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -40,10 +40,11 @@ function confirmed(text: string, doSubmit: boolean = false) {
 }
 
 const url = window.location.href;
-if (url.includes('poe.com')) {
-    platform.togglePlatform('Poe');
-} else if (url.includes('chat.mistral.ai/chat')) {
-    platform.togglePlatform('Mistral');
+for (let p of platform.Platforms) {
+    if (url.includes(p.baseUrl)) {
+        platform.togglePlatform(p.name);
+        break;
+    }
 }
 
 const dialog = new TextInputDialog();

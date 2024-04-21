@@ -1,4 +1,12 @@
-export const Poe: IPlatform = {
+/*
+ * Copyright (c) 2024 by frostime. All Rights Reserved.
+ * @Author       : frostime
+ * @Date         : 2024-04-21 17:17:02
+ * @FilePath     : /src/platform.ts
+ * @LastEditTime : 2024-04-21 17:29:04
+ * @Description  : 
+ */
+const Poe: IPlatform = {
     name: 'Poe',
     baseUrl: 'poe.com',
     selector: {
@@ -21,9 +29,9 @@ export const Poe: IPlatform = {
 }
 
 
-export const Mistral: IPlatform = {
+const Mistral: IPlatform = {
     name: 'Mistral',
-    baseUrl: 'chat.mistral.ai',
+    baseUrl: 'chat.mistral.ai/chat',
     selector: {
         officialTextarea: 'div.flex.flex-row.items-start>textarea',
         submitButton: 'div.flex.flex-row.items-start>textarea + button',
@@ -43,11 +51,14 @@ export const Mistral: IPlatform = {
     }
 }
 
+export const Platforms: IPlatform[] = [Poe, Mistral];
+
 export let currentPlatform: IPlatform;
-export let togglePlatform = (name: 'Poe' | 'Mistral') => {
-    if (name === 'Poe') {
-        currentPlatform = Poe;
-    } else if (name === 'Mistral') {
-        currentPlatform = Mistral;
+export let togglePlatform = (name) => {
+    for (let p of Platforms) {
+        if (p.name === name) {
+            currentPlatform = p;
+            break;
+        }
     }
 }
