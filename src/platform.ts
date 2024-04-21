@@ -20,9 +20,34 @@ export const Poe: IPlatform = {
     }
 }
 
+
+export const Mistral: IPlatform = {
+    name: 'Mistral',
+    baseUrl: 'chat.mistral.ai',
+    selector: {
+        officialTextarea: 'div.flex.flex-row.items-start>textarea',
+        submitButton: 'div.flex.flex-row.items-start>textarea + button',
+        chatSessionTitle: 'div.flex.w-full>p.blocl.truncate',
+    },
+    css: {
+        backgroundColor: 'hsl(var(--background))',
+        primaryColor: 'hsl(var(--primary))',
+    },
+    createTextarea: () => {
+        const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
+        // textarea.rows = 5;
+        textarea.style.backgroundColor = 'hsl(var(--background)) !important';
+        textarea.placeholder = 'Talk to ...';
+        return textarea;
+    }
+}
+
 export let currentPlatform: IPlatform;
 export let togglePlatform = (name: 'Poe' | 'Mistral') => {
     if (name === 'Poe') {
         currentPlatform = Poe;
+    } else if (name === 'Mistral') {
+        currentPlatform = Mistral;
     }
 }

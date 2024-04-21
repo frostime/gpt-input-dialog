@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name      Poe 输入功能增强
 // @namespace gitlab.com/frostime
-// @version   5.0.0
+// @version   5.1.0
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
+// @match     *://chat.mistral.ai/chat/*
 // @icon      https://www.google.com/s2/favicons?sz=64&domain=poe.com
 // @run-at    document-end
 // @author    frostime
@@ -34,10 +35,34 @@
             return textarea;
         }
     };
+    const Mistral = {
+        name: 'Mistral',
+        baseUrl: 'chat.mistral.ai',
+        selector: {
+            officialTextarea: 'div.flex.flex-row.items-start>textarea',
+            submitButton: 'div.flex.flex-row.items-start>textarea + button',
+            chatSessionTitle: 'div.flex.w-full>p.blocl.truncate',
+        },
+        css: {
+            backgroundColor: 'hsl(var(--background))',
+            primaryColor: 'hsl(var(--primary))',
+        },
+        createTextarea: () => {
+            const textarea = document.createElement('textarea');
+            // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
+            // textarea.rows = 5;
+            textarea.style.backgroundColor = 'hsl(var(--background)) !important';
+            textarea.placeholder = 'Talk to ...';
+            return textarea;
+        }
+    };
     let currentPlatform;
     let togglePlatform = (name) => {
         if (name === 'Poe') {
             currentPlatform = Poe;
+        }
+        else if (name === 'Mistral') {
+            currentPlatform = Mistral;
         }
     };
 
@@ -530,7 +555,7 @@ div#dialog button#confirm-button {
      * @Author       : frostime
      * @Date         : 2024-04-06 15:54:15
      * @FilePath     : /src/index.ts
-     * @LastEditTime : 2024-04-21 16:46:35
+     * @LastEditTime : 2024-04-21 17:07:08
      * @Description  : Poe long input dialog
      */
     const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei, Arial, sans-serif';
@@ -558,10 +583,12 @@ div#dialog button#confirm-button {
         }
         focusOffcialTextarea();
     }
-    //获取当前 url，看看 base url 是否为 poe.com
     const url = window.location.href;
     if (url.includes('poe.com')) {
         togglePlatform('Poe');
+    }
+    else if (url.includes('chat.mistral.ai/chat')) {
+        togglePlatform('Mistral');
     }
     const dialog = new TextInputDialog();
     dialog.bindConfirmCallback(confirmed);
