@@ -1,7 +1,7 @@
 {
     "name": "GPT 网站对话框",
     "namespace": "gitlab.com/frostime",
-    "version": "5.2.1",
+    "version": "5.2.2",
     "copyright": "2024, frostime",
     "match": [
         "*://poe.com/chat/*",

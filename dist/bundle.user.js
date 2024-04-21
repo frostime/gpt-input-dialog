@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name      GPT 网站对话框
 // @namespace gitlab.com/frostime
-// @version   5.2.0
+// @version   5.2.2
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
 // @match     *://chat.mistral.ai/chat
@@ -22,7 +22,7 @@
      * @Author       : frostime
      * @Date         : 2024-04-21 17:17:02
      * @FilePath     : /src/platform.ts
-     * @LastEditTime : 2024-04-21 17:51:17
+     * @LastEditTime : 2024-04-21 18:03:08
      * @Description  :
      */
     const Poe = {
@@ -52,7 +52,7 @@
         selector: {
             officialTextarea: 'div.flex.flex-row.items-start>textarea',
             submitButton: 'div.flex.flex-row.items-start>textarea + button',
-            chatSessionTitle: 'div.flex.w-full>p.blocl.truncate',
+            chatSessionTitle: 'div.flex.w-full>p.block.truncate',
         },
         css: {
             backgroundColor: 'hsl(var(--background))',
@@ -73,7 +73,7 @@
         selector: {
             officialTextarea: 'div.editor___KShcc>div[role="textbox"]',
             submitButton: 'button#send-button',
-            chatSessionTitle: 'div.chatHeader___mPWFf>span.title___Jbjbz css-kjohby',
+            chatSessionTitle: 'div.chatHeader___mPWFf>span.title___Jbjbz',
         },
         css: {
             backgroundColor: 'var(--background-default)',
@@ -88,19 +88,22 @@
         },
         getText: () => {
             const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
-            return officialTextarea ? officialTextarea.textContent : '';
+            const spans = officialTextarea.querySelectorAll('span[data-slate-node="text"]>span[data-slate-leaf="true"]>span[data-slate-string="true"]');
+            return Array.from(spans).map((span) => span.textContent).join('\n');
         },
         setText: (text) => {
-            // let doms = [];
-            // let lines = text.split('\n');
-            // for (let line of lines) {
-            //     const dom = `<div data-slate-node="element"><span data-slate-node="text"><span data-slate-leaf="true"><span data-slate-string="true">${line}</span></span></span></div>`;
-            //     doms.push(dom);
-            // }
+            const dom = `<div data-slate-node="element"><span data-slate-node="text"><span data-slate-leaf="true"><span data-slate-string="true"></span></span></span></div>`;
+            const element = document.createElement('template');
+            element.innerHTML = dom;
             const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
+            let lines = text.split('\n');
+            for (let line of lines) {
+                let ele = element.content.cloneNode(true);
+                ele.querySelector('span[data-slate-string="true"]').textContent = line;
+                officialTextarea.appendChild(ele);
+            }
             // officialTextarea.innerHTML = doms.join('\n');
-            //js 模拟 keyboard 粘贴
-            officialTextarea.textContent = text;
+            // officialTextarea.textContent = text.trim();
         }
     };
     const Platforms = [Poe, Mistral, Kimi];

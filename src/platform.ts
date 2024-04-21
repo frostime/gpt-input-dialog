@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-04-21 17:54:26
+ * @LastEditTime : 2024-04-21 18:03:08
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -73,18 +73,22 @@ const Kimi: IPlatform = {
     },
     getText: () => {
         const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
-        return officialTextarea ? officialTextarea.textContent : '';
+        const spans = officialTextarea.querySelectorAll('span[data-slate-node="text"]>span[data-slate-leaf="true"]>span[data-slate-string="true"]');
+        return Array.from(spans).map((span: HTMLElement) => span.textContent).join('\n');
     },
     setText: (text: string) => {
-        // let doms = [];
-        // let lines = text.split('\n');
-        // for (let line of lines) {
-        //     const dom = `<div data-slate-node="element"><span data-slate-node="text"><span data-slate-leaf="true"><span data-slate-string="true">${line}</span></span></span></div>`;
-        //     doms.push(dom);
-        // }
+        const dom = `<div data-slate-node="element"><span data-slate-node="text"><span data-slate-leaf="true"><span data-slate-string="true"></span></span></span></div>`;
+        const element = document.createElement('template');
+        element.innerHTML = dom;
         const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
+        let lines = text.split('\n');
+        for (let line of lines) {
+            let ele = element.content.cloneNode(true) as HTMLElement;
+            ele.querySelector('span[data-slate-string="true"]').textContent = line;
+            officialTextarea.appendChild(ele);
+        }
         // officialTextarea.innerHTML = doms.join('\n');
-        officialTextarea.textContent = text.trim();
+        // officialTextarea.textContent = text.trim();
     }
 }
 
