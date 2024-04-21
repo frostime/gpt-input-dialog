@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name      Poe 输入功能增强
 // @namespace gitlab.com/frostime
-// @version   4.8.3
+// @version   5.0.0
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
 // @icon      https://www.google.com/s2/favicons?sz=64&domain=poe.com
@@ -13,12 +13,40 @@
 (function () {
     'use strict';
 
+    const Poe = {
+        name: 'Poe',
+        baseUrl: 'poe.com',
+        selector: {
+            officialTextarea: 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea',
+            submitButton: 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt',
+            chatSessionTitle: 'p.ChatHeader_overflow__aVkfq',
+        },
+        css: {
+            backgroundColor: 'var(--pdl-bg-base)',
+            primaryColor: 'var(--pdl-accent-base)',
+        },
+        createTextarea: () => {
+            const textarea = document.createElement('textarea');
+            textarea.className = 'GrowingTextArea_textArea__ZWQbP';
+            textarea.rows = 5;
+            textarea.style.backgroundColor = 'var(--pdl-bg-base) !important';
+            textarea.placeholder = 'Talk to ...';
+            return textarea;
+        }
+    };
+    let currentPlatform;
+    let togglePlatform = (name) => {
+        if (name === 'Poe') {
+            currentPlatform = Poe;
+        }
+    };
+
     /*
      * Copyright (c) 2023 by frostime. All Rights Reserved.
      * @Author       : frostime
      * @Date         : 2023-08-16 17:05:29
      * @FilePath     : /src/utils.ts
-     * @LastEditTime : 2024-04-07 17:14:47
+     * @LastEditTime : 2024-04-21 16:37:55
      * @Description  :
      */
     /**
@@ -54,7 +82,8 @@
         style.textContent = cssText;
     }
     const queryOfficalTextarea = () => {
-        const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
+        // const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
+        const q = currentPlatform.selector.officialTextarea;
         const textarea = document.querySelector(q);
         return textarea;
     };
@@ -62,23 +91,23 @@
         const textarea = queryOfficalTextarea();
         textarea?.focus();
     };
-    const StyleSheet = (FontFamily) => `
+    const StyleSheet = (FontFamily, currentPlatform) => `
 textarea.GrowingTextArea_textArea__ZWQbP {
-    background: var(--pdl-bg-base) !important;
+    background: ${currentPlatform.css.backgroundColor} !important;
 }
 button#floating-button {
     position: absolute;
     right: 50px;
     bottom: 10px;
     padding: 10px 20px;
-    background-color: var(--pdl-accent-base);
+    background-color: ${currentPlatform.css.primaryColor};
     color: #fff;
     border: none;
     border-radius: 25px;
     cursor: pointer;
 }
 div#dialog {
-    background-color: var(--pdl-bg-base);
+    background-color: ${currentPlatform.css.backgroundColor};
     padding: 21px;
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
@@ -93,7 +122,7 @@ div#dialog {
     bottom: 50px;
 }
 div#dialog #dialog-text-input {
-    border: 1px solid var(--pdl-accent-base);
+    border: 1px solid ${currentPlatform.css.primaryColor};
     border-radius: 4px;
     padding: 8px;
     flex-grow: 1; /* Allow the text input area to grow */
@@ -123,7 +152,7 @@ div#dialog button#cancel-button {
 div#dialog button#fill-button {
     margin-right: 8px;
     padding: 8px 16px;
-    background-color: var(--pdl-accent-base);
+    background-color: ${currentPlatform.css.primaryColor};
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -131,7 +160,7 @@ div#dialog button#fill-button {
 }
 div#dialog button#confirm-button {
     padding: 8px 16px;
-    background-color: var(--pdl-accent-base);
+    background-color: ${currentPlatform.css.primaryColor};
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -313,7 +342,7 @@ div#dialog button#confirm-button {
      * @Author       : frostime
      * @Date         : 2024-04-06 16:08:53
      * @FilePath     : /src/components.ts
-     * @LastEditTime : 2024-04-07 17:04:01
+     * @LastEditTime : 2024-04-21 16:39:41
      * @Description  :
      */
     const KeydownEventHandler = (event, { textarea, cancelButton, fillButton, confirmButton }) => {
@@ -405,11 +434,7 @@ div#dialog button#confirm-button {
             const textInput = document.createElement('div');
             textInput.id = 'dialog-text-input';
             textInput.dataset.replicatedValue = '';
-            const textarea = document.createElement('textarea');
-            textarea.className = 'GrowingTextArea_textArea__ZWQbP';
-            textarea.rows = 5;
-            textarea.style.backgroundColor = 'var(--pdl-bg-base) !important';
-            textarea.placeholder = 'Talk to ...';
+            const textarea = currentPlatform.createTextarea();
             textInput.appendChild(textarea);
             this.textarea = textarea;
             //show space inside textarea
@@ -487,12 +512,12 @@ div#dialog button#confirm-button {
          * 将官方网页的输入框的内容填充到自定义输入框
          */
         updateDialog() {
-            const column = document.querySelector('.MainColumn_column__UEunw');
-            //dialog 和 column 中心对齐
-            this.dialog.style.left = `${column.offsetLeft + column.offsetWidth / 2 - this.dialog.offsetWidth / 2}px`;
+            // const column: HTMLDivElement | null = document.querySelector('.MainColumn_column__UEunw');
+            // //dialog 和 column 中心对齐
+            // this.dialog.style.left = `${column.offsetLeft + column.offsetWidth / 2 - this.dialog.offsetWidth / 2}px`;
             const baseText = queryOfficalTextarea()?.value;
             this.textarea.value = baseText || '';
-            const title = document.querySelector('p.ChatHeader_overflow__aVkfq');
+            const title = document.querySelector(currentPlatform.selector.chatSessionTitle);
             if (title) {
                 this.textarea.placeholder = `Talk to ${title.textContent}`;
             }
@@ -505,13 +530,14 @@ div#dialog button#confirm-button {
      * @Author       : frostime
      * @Date         : 2024-04-06 15:54:15
      * @FilePath     : /src/index.ts
-     * @LastEditTime : 2024-04-08 13:18:50
+     * @LastEditTime : 2024-04-21 16:46:35
      * @Description  : Poe long input dialog
      */
     const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei, Arial, sans-serif';
     function submit() {
         setTimeout(() => {
-            const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
+            // const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
+            const qButton = currentPlatform.selector.submitButton;
             const button = document.querySelector(qButton);
             if (button) {
                 button.click();
@@ -532,18 +558,23 @@ div#dialog button#confirm-button {
         }
         focusOffcialTextarea();
     }
+    //获取当前 url，看看 base url 是否为 poe.com
+    const url = window.location.href;
+    if (url.includes('poe.com')) {
+        togglePlatform('Poe');
+    }
     const dialog = new TextInputDialog();
     dialog.bindConfirmCallback(confirmed);
-    updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily));
+    updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily, currentPlatform));
     //监听鼠鼠标
-    document.addEventListener('dblclick', (e) => {
-        let activeElement = document.activeElement;
-        if (activeElement.tagName === 'TEXTAREA' && activeElement.className === 'GrowingTextArea_textArea__ZWQbP') {
-            e.preventDefault();
-            e.stopPropagation();
-            dialog.show();
-        }
-    });
+    // document.addEventListener('dblclick', (e) => {
+    //     let activeElement = document.activeElement;
+    //     if (activeElement.tagName === 'TEXTAREA' && activeElement.className === 'GrowingTextArea_textArea__ZWQbP') {
+    //         e.preventDefault();
+    //         e.stopPropagation();
+    //         dialog.show();
+    //     }
+    // });
     //监听按键
     document.addEventListener('keydown', (event) => {
         //Alt + S
