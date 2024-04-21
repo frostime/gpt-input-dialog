@@ -43,6 +43,9 @@ devDependencies:
   rollup:
     specifier: ^3.21.2
     version: 3.21.2
+  rollup-plugin-cleanup:
+    specifier: ^3.2.1
+    version: 3.2.1(rollup@3.21.2)
   rollup-plugin-userscript-metablock:
     specifier: ^0.3.3
     version: 0.3.3
@@ -859,6 +862,10 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /estree-walker@0.6.1:
+    resolution: {integrity: sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==}
+    dev: true
+
   /estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
     dev: true
@@ -1087,6 +1094,15 @@ packages:
     resolution: {integrity: sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=}
     dev: true
 
+  /js-cleanup@1.2.0:
+    resolution: {integrity: sha512-JeDD0yiiSt80fXzAVa/crrS0JDPQljyBG/RpOtaSbyDq03VHa9szJWMaWOYU/bcTn412uMN2MxApXq8v79cUiQ==}
+    engines: {node: ^10.14.2 || >=12.0.0}
+    dependencies:
+      magic-string: 0.25.9
+      perf-regexes: 1.0.1
+      skip-regex: 1.0.2
+    dev: true
+
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
     dev: true
@@ -1269,6 +1285,11 @@ packages:
     resolution: {integrity: sha512-gu9bD6Ta5bwGrrU8muHzVOBFFREpp2iRkVfhBJahwJ6p6Xw20SjT0MxLnwkjOibQmGSYhiUnf2FLe7k+jcFmGQ==}
     dev: true
 
+  /perf-regexes@1.0.1:
+    resolution: {integrity: sha512-L7MXxUDtqr4PUaLFCDCXBfGV/6KLIuSEccizDI7JxT+c9x1G1v04BQ4+4oag84SHaCdrBgQAIs/Cqn+flwFPng==}
+    engines: {node: '>=6.14'}
+    dev: true
+
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
     dev: true
@@ -1344,6 +1365,17 @@ packages:
       supports-preserve-symlinks-flag: 1.0.0
     dev: true
 
+  /rollup-plugin-cleanup@3.2.1(rollup@3.21.2):
+    resolution: {integrity: sha512-zuv8EhoO3TpnrU8MX8W7YxSbO4gmOR0ny06Lm3nkFfq0IVKdBUtHwhVzY1OAJyNCIAdLiyPnOrU0KnO0Fri1GQ==}
+    engines: {node: ^10.14.2 || >=12.0.0}
+    peerDependencies:
+      rollup: '>=2.0'
+    dependencies:
+      js-cleanup: 1.2.0
+      rollup: 3.21.2
+      rollup-pluginutils: 2.8.2
+    dev: true
+
   /rollup-plugin-userscript-metablock@0.3.3:
     resolution: {integrity: sha512-QxKzCTVyiaEhKEMlYjUfclXO+sZOaCwPn0diOeLdID+Ip9eOJv9kRywZ/76s8LSBenwdFLh9d/76kDUN7VqZmQ==}
     dependencies:
@@ -1355,6 +1387,12 @@ packages:
       valid-url: 1.0.9
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /rollup-pluginutils@2.8.2:
+    resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
+    dependencies:
+      estree-walker: 0.6.1
     dev: true
 
   /rollup@3.21.2:
@@ -1438,6 +1476,11 @@ packages:
 
   /signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
+    dev: true
+
+  /skip-regex@1.0.2:
+    resolution: {integrity: sha512-pEjMUbwJ5Pl/6Vn6FsamXHXItJXSRftcibixDmNCWbWhic0hzHrwkMZo0IZ7fMRH9KxcWDFSkzhccB4285PutA==}
+    engines: {node: '>=4.2'}
     dev: true
 
   /slash@2.0.0:

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name      GPT 网站对话框
 // @namespace gitlab.com/frostime
-// @version   5.2.2
+// @version   5.2.3
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
 // @match     *://chat.mistral.ai/chat
@@ -17,14 +17,6 @@
 (function () {
     'use strict';
 
-    /*
-     * Copyright (c) 2024 by frostime. All Rights Reserved.
-     * @Author       : frostime
-     * @Date         : 2024-04-21 17:17:02
-     * @FilePath     : /src/platform.ts
-     * @LastEditTime : 2024-04-21 18:03:08
-     * @Description  :
-     */
     const Poe = {
         name: 'Poe',
         baseUrl: 'poe.com',
@@ -60,8 +52,6 @@
         },
         createTextarea: () => {
             const textarea = document.createElement('textarea');
-            // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
-            // textarea.rows = 5;
             textarea.style.backgroundColor = 'hsl(var(--background)) !important';
             textarea.placeholder = 'Talk to ...';
             return textarea;
@@ -81,8 +71,6 @@
         },
         createTextarea: () => {
             const textarea = document.createElement('textarea');
-            // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
-            // textarea.rows = 5;
             textarea.placeholder = 'Talk to ...';
             return textarea;
         },
@@ -102,8 +90,6 @@
                 ele.querySelector('span[data-slate-string="true"]').textContent = line;
                 officialTextarea.appendChild(ele);
             }
-            // officialTextarea.innerHTML = doms.join('\n');
-            // officialTextarea.textContent = text.trim();
         }
     };
     const Platforms = [Poe, Mistral, Kimi];
@@ -117,32 +103,13 @@
         }
     };
 
-    /*
-     * Copyright (c) 2023 by frostime. All Rights Reserved.
-     * @Author       : frostime
-     * @Date         : 2023-08-16 17:05:29
-     * @FilePath     : /src/utils.ts
-     * @LastEditTime : 2024-04-21 16:37:55
-     * @Description  :
-     */
-    /**
-     * 分割 textarea 的行
-     * @param textarea HTMLTextAreaElement
-     * @param position number - The position index to split the text at
-     * @returns
-     *  - befores: string[], position 之前的行
-     *  - line: string, position 所在的行
-     *  - afters: string[], position 之后的行
-     */
     const splitTextareaLines = (textarea, position) => {
         const text = textarea.value;
-        // Guard against positions out of bounds
         if (position < 0 || position > text.length) {
             throw new Error('Position is out of bounds of the text length');
         }
         const befores = text.slice(0, position).split('\n');
         const afters = text.slice(position).split('\n');
-        // Safely concatenate the current line, even if pop or shift return undefined
         const currentLineBefore = befores.pop() ?? '';
         const currentLineAfter = afters.shift() ?? '';
         const line = currentLineBefore + currentLineAfter;
@@ -158,7 +125,6 @@
         style.textContent = cssText;
     }
     const queryOfficalTextarea = () => {
-        // const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
         const q = currentPlatform.selector.officialTextarea;
         const textarea = document.querySelector(q);
         return textarea;
@@ -243,7 +209,6 @@ div#dialog button#confirm-button {
     cursor: pointer;
 }`;
 
-    /** Call a function after focusing a field and then restore the previous focus afterwards if necessary */
     function withFocus(field, callback) {
       const document = field.ownerDocument;
       const initialFocus = document.activeElement;
@@ -254,23 +219,19 @@ div#dialog button#confirm-button {
         field.focus();
         return callback();
       } finally {
-        field.blur(); // Supports `intialFocus === body`
+        field.blur();
         if (initialFocus instanceof HTMLElement) {
           initialFocus.focus();
         }
       }
     }
-    // This will insert into the focused field. It shouild always be called inside withFocus.
-    // Use this one locally if there are multiple `insertTextIntoField` or `document.execCommand` calls
     function insertTextWhereverTheFocusIs(document, text) {
       if (text === '') {
-        // https://github.com/fregante/text-field-edit/issues/16
         document.execCommand('delete');
       } else {
         document.execCommand('insertText', false, text);
       }
     }
-    /** Inserts `text` at the cursor’s position, replacing any selection, with **undo** support and by firing the `input` event. */
     function insertTextIntoField(field, text) {
       withFocus(field, () => {
         insertTextWhereverTheFocusIs(field.ownerDocument, text);
@@ -283,41 +244,23 @@ div#dialog button#confirm-button {
      * @license MIT
      * ----------------------------------------------------------------------------
     MIT License
-
     Copyright (c) Federico Brigante <me@fregante.com> (https://fregante.com)
-
     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
     The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
      */
-    /*
-
-    # Global notes
-
-    Indent and unindent affect characters outside the selection, so the selection has to be expanded (`newSelection`) before applying the replacement regex.
-
-    The unindent selection expansion logic is a bit convoluted and I wish a genius would rewrite it more efficiently.
-
-    */
     function indentSelection(element) {
         const { selectionStart, selectionEnd, value } = element;
         const selectedText = value.slice(selectionStart, selectionEnd);
-        // The first line should be indented, even if it starts with `\n`
-        // The last line should only be indented if includes any character after `\n`
         const lineBreakCount = /\n/g.exec(selectedText)?.length;
         if (lineBreakCount > 0) {
-            // Select full first line to replace everything at once
             const firstLineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
             const newSelection = element.value.slice(firstLineStart, selectionEnd - 1);
-            const indentedText = newSelection.replaceAll(/^|\n/g, // Match all line starts
+            const indentedText = newSelection.replaceAll(/^|\n/g,
             '$&    ');
             const replacementsCount = indentedText.length - newSelection.length;
-            // Replace newSelection with indentedText
             element.setSelectionRange(firstLineStart, selectionEnd - 1);
             insertTextIntoField(element, indentedText);
-            // Restore selection position, including the indentation
             element.setSelectionRange(selectionStart + 4, selectionEnd + replacementsCount);
         }
         else {
@@ -325,25 +268,19 @@ div#dialog button#confirm-button {
         }
     }
     function findLineEnd(value, currentEnd) {
-        // Go to the beginning of the last line
         const lastLineStart = value.lastIndexOf('\n', currentEnd - 1) + 1;
-        // There's nothing to unindent after the last cursor, so leave it as is
         if (value.charAt(lastLineStart) !== '\t') {
             return currentEnd;
         }
-        return lastLineStart + 1; // Include the first character, which will be a tab
+        return lastLineStart + 1;
     }
-    // The first line should always be unindented
-    // The last line should only be unindented if the selection includes any characters after `\n`
     function unindentSelection(element) {
         const { selectionStart, selectionEnd, value } = element;
-        // Select the whole first line because it might contain \t
         const firstLineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
         const minimumSelectionEnd = findLineEnd(value, selectionEnd);
         const newSelection = element.value.slice(firstLineStart, minimumSelectionEnd);
         const indentedText = newSelection.replaceAll(/(^|\n)(\t| {1,4})/g, '$1');
         const replacementsCount = newSelection.length - indentedText.length;
-        // Replace newSelection with indentedText
         element.setSelectionRange(firstLineStart, minimumSelectionEnd);
         insertTextIntoField(element, indentedText);
         const firstLineIndentation = /\t| {1,4}/.exec(value.slice(firstLineStart, selectionStart));
@@ -401,7 +338,6 @@ div#dialog button#confirm-button {
         confirm: 'Submit[Ctrl+Enter]',
     };
     const useI18n = () => {
-        //get lang
         const lang = navigator.language;
         switch (lang) {
             case 'zh-CN':
@@ -413,51 +349,32 @@ div#dialog button#confirm-button {
         }
     };
 
-    /*
-     * Copyright (c) 2024 by frostime. All Rights Reserved.
-     * @Author       : frostime
-     * @Date         : 2024-04-06 16:08:53
-     * @FilePath     : /src/components.ts
-     * @LastEditTime : 2024-04-21 17:39:22
-     * @Description  :
-     */
     const KeydownEventHandler = (event, { textarea, cancelButton, fillButton, confirmButton }) => {
         const { key, shiftKey } = event;
-        //Esc to close dialog
         if (key === 'Escape') {
             cancelButton.click();
         }
-        //Ctrl + Enter to submit
         if (key === 'Enter' && event.ctrlKey) {
             event.preventDefault();
             confirmButton.click();
         }
-        //Alt + Enter to fill
         if (key === 'Enter' && event.altKey) {
             event.preventDefault();
             fillButton.click();
         }
-        // Handle enter key, 自动跟随缩进
         if (key === 'Enter' && !shiftKey) {
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
             if (start !== end) {
-                // If there is no selection, just insert a newline
                 return;
             }
             const position = textarea.selectionStart;
             const { befores, line, afters } = splitTextareaLines(textarea, position);
-            //获取当前行前面的空格
             const whiteSpaceMatch = line.match(/^\s*/);
             const whiteSpace = whiteSpaceMatch ? whiteSpaceMatch[0] : '';
-            // //获取当前行的开头是否满足 markdown 列表语法 -, +, *
-            // const listMatch = currentLine.trim().match(/^[-+*]\s/);
-            // const headingChar = listMatch ? listMatch[0] : '';
-            //新开一行自动缩进
             insertTextIntoField(textarea, `\n${whiteSpace}`);
             event.preventDefault();
         }
-        //Delete key, 对于空行做 unindent 处理
         if (key === 'Backspace' && textarea.selectionStart === textarea.selectionEnd) {
             const position = textarea.selectionStart;
             if (position === 0)
@@ -467,11 +384,9 @@ div#dialog button#confirm-button {
                 return;
             if (line.trim() === '') {
                 event.preventDefault();
-                // event.stopPropagation();
                 unindentSelection(textarea);
             }
         }
-        //Press ctrl+[up arrow /down arrow] to change font size
         if (event.ctrlKey && (key === 'ArrowUp' || key === 'ArrowDown')) {
             event.preventDefault();
             const fontSize = parseInt(window.getComputedStyle(textarea).fontSize);
@@ -502,54 +417,42 @@ div#dialog button#confirm-button {
             overlay.style.alignItems = 'center';
             overlay.style.zIndex = '9999';
             this.overlay = overlay;
-            // Create the dialog
             const dialog = document.createElement('div');
             dialog.id = 'dialog';
             this.dialog = dialog;
-            // Create the text input area
             const textInput = document.createElement('div');
             textInput.id = 'dialog-text-input';
             textInput.dataset.replicatedValue = '';
             const textarea = currentPlatform.createTextarea();
             textInput.appendChild(textarea);
             this.textarea = textarea;
-            //show space inside textarea
             textarea.style.whiteSpace = 'pre-wrap';
             textarea.addEventListener('keydown', (event) => {
                 KeydownEventHandler(event, this);
             });
-            //优先自定义的事件处理，以防止被 preventDefault
             enableTabToIndent(textarea);
-            // Create the button container
             const buttonContainer = document.createElement('div');
             buttonContainer.style.display = 'flex';
             buttonContainer.style.justifyContent = 'flex-end';
             buttonContainer.style.marginTop = '16px';
-            // Create the cancel button
             const cancelButton = document.createElement('button');
             cancelButton.id = 'cancel-button';
             cancelButton.textContent = i18n.cancel;
-            // Create the confirm button
             const fillButton = document.createElement('button');
             fillButton.id = 'fill-button';
             fillButton.textContent = i18n.fill;
-            // Create the confirm button
             const confirmButton = document.createElement('button');
             confirmButton.id = 'confirm-button';
             confirmButton.textContent = i18n.confirm;
-            // Append buttons to the button container
             buttonContainer.appendChild(cancelButton);
             buttonContainer.appendChild(fillButton);
             buttonContainer.appendChild(confirmButton);
             this.cancelButton = cancelButton;
             this.fillButton = fillButton;
             this.confirmButton = confirmButton;
-            // Append text input and button container to the dialog
             dialog.appendChild(textInput);
             dialog.appendChild(buttonContainer);
-            // Append dialog to the overlay
             overlay.appendChild(dialog);
-            // Append overlay to the document body
             document.body.appendChild(overlay);
             cancelButton.addEventListener('click', () => {
                 overlay.style.display = 'none';
@@ -575,7 +478,6 @@ div#dialog button#confirm-button {
             focusOffcialTextarea();
         }
         show() {
-            //避免重复显示
             if (this.overlay.style.display === 'flex') {
                 return;
             }
@@ -584,13 +486,7 @@ div#dialog button#confirm-button {
             this.updateDialog();
             this.textarea.focus();
         }
-        /**
-         * 将官方网页的输入框的内容填充到自定义输入框
-         */
         updateDialog() {
-            // const column: HTMLDivElement | null = document.querySelector('.MainColumn_column__UEunw');
-            // //dialog 和 column 中心对齐
-            // this.dialog.style.left = `${column.offsetLeft + column.offsetWidth / 2 - this.dialog.offsetWidth / 2}px`;
             if (currentPlatform.getText === undefined) {
                 const baseText = queryOfficalTextarea()?.value;
                 this.textarea.value = baseText || '';
@@ -606,18 +502,9 @@ div#dialog button#confirm-button {
         }
     }
 
-    /*
-     * Copyright (c) 2024 by frostime. All Rights Reserved.
-     * @Author       : frostime
-     * @Date         : 2024-04-06 15:54:15
-     * @FilePath     : /src/index.ts
-     * @LastEditTime : 2024-04-21 17:48:04
-     * @Description  : Poe long input dialog
-     */
     const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei, Arial, sans-serif';
     function submit() {
         setTimeout(() => {
-            // const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
             const qButton = currentPlatform.selector.submitButton;
             const button = document.querySelector(qButton);
             if (button) {
@@ -654,32 +541,12 @@ div#dialog button#confirm-button {
     const dialog = new TextInputDialog();
     dialog.bindConfirmCallback(confirmed);
     updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily, currentPlatform));
-    //监听鼠鼠标
-    // document.addEventListener('dblclick', (e) => {
-    //     let activeElement = document.activeElement;
-    //     if (activeElement.tagName === 'TEXTAREA' && activeElement.className === 'GrowingTextArea_textArea__ZWQbP') {
-    //         e.preventDefault();
-    //         e.stopPropagation();
-    //         dialog.show();
-    //     }
-    // });
-    //监听按键
     document.addEventListener('keydown', (event) => {
-        //Alt + S
         if (event.altKey && event.key === 's') {
             event.preventDefault();
             event.stopPropagation();
             dialog.show();
         }
-        //禁止 Enter 直接提交
-        // if (event.key === 'Enter' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
-        //     const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
-        //     let target = event.target;
-        //     if (target.tagName === 'TEXTAREA' && target.className === 'GrowingTextArea_textArea__ZWQbP') {
-        //         event.stopPropagation();
-        //         return;
-        //     }
-        // }
     }, true);
 
 })();

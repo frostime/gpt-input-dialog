@@ -5,6 +5,7 @@ import replace from '@rollup/plugin-replace'
 import typescriptPlugin from '@rollup/plugin-typescript'
 import typescript from 'typescript'
 import metablock from 'rollup-plugin-userscript-metablock'
+import cleanup from 'rollup-plugin-cleanup';
 
 import fs from 'fs'
 import pkg from './package.json' assert { type: 'json' }
@@ -31,6 +32,9 @@ export default {
       preventAssignment: true
     }),
     nodeResolve({ extensions: ['.js', '.ts', '.tsx'] }),
+    cleanup({
+      extensions: ['ts', 'tsx', 'js'],
+    }),
     typescriptPlugin({ typescript }),
     commonjs({
       include: [
