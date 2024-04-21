@@ -3,7 +3,7 @@
  * @Author       : Yp Z
  * @Date         : 2023-08-16 17:13:02
  * @FilePath     : /src/type.d.ts
- * @LastEditTime : 2024-04-21 16:26:03
+ * @LastEditTime : 2024-04-21 16:37:31
  * @Description  : 
  */
 interface IHttpRequestPayload<CONTEXT_TYPE> {
@@ -24,6 +24,7 @@ interface IHttpRequestPayload<CONTEXT_TYPE> {
 
 interface IPlatform {
     name: string;
+    baseUrl: string;
     selector: {
         officialTextarea: string;
         submitButton: string;
@@ -31,6 +32,7 @@ interface IPlatform {
     };
     css: {
         backgroundColor: string;
-        buttonColor: string;
+        primaryColor: string;
     };
+    createTextarea: () => HTMLTextAreaElement;
 }

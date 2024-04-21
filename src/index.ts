@@ -3,9 +3,10 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-04-21 16:31:01
+ * @LastEditTime : 2024-04-21 16:36:22
  * @Description  : Poe long input dialog
  */
+import * as platform from './platform';
 import { updateStyleSheet, queryOfficalTextarea, focusOffcialTextarea, StyleSheet } from './utils';
 import { TextInputDialog } from './components';
 
@@ -14,7 +15,8 @@ const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei,
 function submit() {
 
     setTimeout(() => {
-        const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
+        // const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
+        const qButton = platform.currentPlatform.selector.submitButton;
         const button: HTMLButtonElement = document.querySelector(qButton);
         if (button) {
             button.click();
@@ -37,11 +39,11 @@ function confirmed(text: string, doSubmit: boolean = false) {
     focusOffcialTextarea();
 }
 
-
+platform.togglePlatform('Poe');
 
 const dialog = new TextInputDialog();
 dialog.bindConfirmCallback(confirmed);
-updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily));
+updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily, platform.currentPlatform));
 
 //监听鼠鼠标
 // document.addEventListener('dblclick', (e) => {

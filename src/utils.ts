@@ -3,9 +3,10 @@
  * @Author       : frostime
  * @Date         : 2023-08-16 17:05:29
  * @FilePath     : /src/utils.ts
- * @LastEditTime : 2024-04-07 17:14:47
+ * @LastEditTime : 2024-04-21 16:37:55
  * @Description  : 
  */
+import * as platform from './platform';
 
 /**
  * 分割 textarea 的行
@@ -46,7 +47,8 @@ export function updateStyleSheet(id: string, cssText: string) {
 }
 
 export const queryOfficalTextarea = (): HTMLTextAreaElement | null => {
-    const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
+    // const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
+    const q = platform.currentPlatform.selector.officialTextarea;
     const textarea: HTMLTextAreaElement = document.querySelector(q);
     return textarea;
 }
@@ -56,23 +58,23 @@ export const focusOffcialTextarea = () => {
     textarea?.focus();
 }
 
-export const StyleSheet = (FontFamily: string) => `
+export const StyleSheet = (FontFamily: string, currentPlatform: IPlatform) => `
 textarea.GrowingTextArea_textArea__ZWQbP {
-    background: var(--pdl-bg-base) !important;
+    background: ${currentPlatform.css.backgroundColor} !important;
 }
 button#floating-button {
     position: absolute;
     right: 50px;
     bottom: 10px;
     padding: 10px 20px;
-    background-color: var(--pdl-accent-base);
+    background-color: ${currentPlatform.css.primaryColor};
     color: #fff;
     border: none;
     border-radius: 25px;
     cursor: pointer;
 }
 div#dialog {
-    background-color: var(--pdl-bg-base);
+    background-color: ${currentPlatform.css.backgroundColor};
     padding: 21px;
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
@@ -87,7 +89,7 @@ div#dialog {
     bottom: 50px;
 }
 div#dialog #dialog-text-input {
-    border: 1px solid var(--pdl-accent-base);
+    border: 1px solid ${currentPlatform.css.primaryColor};
     border-radius: 4px;
     padding: 8px;
     flex-grow: 1; /* Allow the text input area to grow */
@@ -117,7 +119,7 @@ div#dialog button#cancel-button {
 div#dialog button#fill-button {
     margin-right: 8px;
     padding: 8px 16px;
-    background-color: var(--pdl-accent-base);
+    background-color: ${currentPlatform.css.primaryColor};
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -125,7 +127,7 @@ div#dialog button#fill-button {
 }
 div#dialog button#confirm-button {
     padding: 8px 16px;
-    background-color: var(--pdl-accent-base);
+    background-color: ${currentPlatform.css.primaryColor};
     color: #fff;
     border: none;
     border-radius: 4px;

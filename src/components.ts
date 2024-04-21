@@ -3,13 +3,15 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-07 17:04:01
+ * @LastEditTime : 2024-04-21 16:39:41
  * @Description  : 
  */
 import { enableTabToIndent, unindentSelection } from './indent-textarea';
 import { insertTextIntoField } from 'text-field-edit';
 import { queryOfficalTextarea, focusOffcialTextarea, splitTextareaLines } from "./utils";
 import { useI18n } from './i18n';
+
+import * as platform from './platform';
 
 interface IDialogElements {
     textarea: HTMLTextAreaElement;
@@ -134,11 +136,7 @@ export class TextInputDialog {
         textInput.id = 'dialog-text-input';
         textInput.dataset.replicatedValue = '';
 
-        const textarea: HTMLTextAreaElement = document.createElement('textarea');
-        textarea.className = 'GrowingTextArea_textArea__ZWQbP';
-        textarea.rows = 5;
-        textarea.style.backgroundColor = 'var(--pdl-bg-base) !important';
-        textarea.placeholder = 'Talk to ...';
+        const textarea: HTMLTextAreaElement = platform.currentPlatform.createTextarea();
         textInput.appendChild(textarea);
         this.textarea = textarea;
 
@@ -233,13 +231,13 @@ export class TextInputDialog {
      * 将官方网页的输入框的内容填充到自定义输入框
      */
     updateDialog() {
-        const column: HTMLDivElement | null = document.querySelector('.MainColumn_column__UEunw');
-        //dialog 和 column 中心对齐
-        this.dialog.style.left = `${column.offsetLeft + column.offsetWidth / 2 - this.dialog.offsetWidth / 2}px`;
+        // const column: HTMLDivElement | null = document.querySelector('.MainColumn_column__UEunw');
+        // //dialog 和 column 中心对齐
+        // this.dialog.style.left = `${column.offsetLeft + column.offsetWidth / 2 - this.dialog.offsetWidth / 2}px`;
 
         const baseText: string | null = queryOfficalTextarea()?.value;
         this.textarea.value = baseText || '';
-        const title = document.querySelector('p.ChatHeader_overflow__aVkfq');
+        const title = document.querySelector(platform.currentPlatform.selector.chatSessionTitle);
         if (title) {
             this.textarea.placeholder = `Talk to ${title.textContent}`;
         }
