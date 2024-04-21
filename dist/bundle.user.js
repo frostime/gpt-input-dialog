@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name      GPT 网站对话框
 // @namespace gitlab.com/frostime
-// @version   5.2.3
+// @version   5.3.0
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
 // @match     *://chat.mistral.ai/chat
 // @match     *://chat.mistral.ai/chat/*
 // @match     *://kimi.moonshot.cn
 // @match     *://kimi.moonshot.cn/chat/*
+// @match     *://chat.openai.com/*
 // @icon      https://www.google.com/s2/favicons?sz=64&domain=poe.com
 // @run-at    document-end
 // @author    frostime
@@ -57,42 +58,25 @@
             return textarea;
         }
     };
-    const Kimi = {
-        name: 'Kimi',
-        baseUrl: 'kimi.moonshot.cn',
+    const ChatGPT = {
+        name: 'ChatGPT',
+        baseUrl: 'chat.openai.com',
         selector: {
-            officialTextarea: 'div.editor___KShcc>div[role="textbox"]',
-            submitButton: 'button#send-button',
-            chatSessionTitle: 'div.chatHeader___mPWFf>span.title___Jbjbz',
+            officialTextarea: 'textarea#prompt-textarea',
+            submitButton: 'textarea#prompt-textarea + button',
+            chatSessionTitle: '#chat-title',
         },
         css: {
-            backgroundColor: 'var(--background-default)',
-            primaryColor: 'var(--msh-button-primary-bg)',
+            backgroundColor: 'var(--main-surface-primary)',
+            primaryColor: '#2e95d3',
         },
         createTextarea: () => {
             const textarea = document.createElement('textarea');
             textarea.placeholder = 'Talk to ...';
             return textarea;
-        },
-        getText: () => {
-            const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
-            const spans = officialTextarea.querySelectorAll('span[data-slate-node="text"]>span[data-slate-leaf="true"]>span[data-slate-string="true"]');
-            return Array.from(spans).map((span) => span.textContent).join('\n');
-        },
-        setText: (text) => {
-            const dom = `<div data-slate-node="element"><span data-slate-node="text"><span data-slate-leaf="true"><span data-slate-string="true"></span></span></span></div>`;
-            const element = document.createElement('template');
-            element.innerHTML = dom;
-            const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
-            let lines = text.split('\n');
-            for (let line of lines) {
-                let ele = element.content.cloneNode(true);
-                ele.querySelector('span[data-slate-string="true"]').textContent = line;
-                officialTextarea.appendChild(ele);
-            }
         }
     };
-    const Platforms = [Poe, Mistral, Kimi];
+    const Platforms = [Poe, Mistral, ChatGPT];
     let currentPlatform;
     let togglePlatform = (name) => {
         for (let p of Platforms) {

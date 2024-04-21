@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-04-21 18:03:08
+ * @LastEditTime : 2024-04-21 18:39:46
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -52,6 +52,7 @@ const Mistral: IPlatform = {
 }
 
 
+//BUG setText 无法正常运行，暂时先不用了
 const Kimi: IPlatform = {
     name: 'Kimi',
     baseUrl: 'kimi.moonshot.cn',
@@ -93,7 +94,30 @@ const Kimi: IPlatform = {
 }
 
 
-export const Platforms: IPlatform[] = [Poe, Mistral, Kimi];
+const ChatGPT: IPlatform = {
+    name: 'ChatGPT',
+    baseUrl: 'chat.openai.com',
+    selector: {
+        officialTextarea: 'textarea#prompt-textarea',
+        submitButton: 'textarea#prompt-textarea + button',
+        chatSessionTitle: '#chat-title', //不存在
+    },
+    css: {
+        backgroundColor: 'var(--main-surface-primary)',
+        primaryColor: '#2e95d3',
+    },
+    createTextarea: () => {
+        const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
+        // textarea.rows = 5;
+        // textarea.style.backgroundColor = 'hsl(var(--background)) !important';
+        textarea.placeholder = 'Talk to ...';
+        return textarea;
+    }
+}
+
+
+export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT];
 
 export let currentPlatform: IPlatform;
 export let togglePlatform = (name) => {
