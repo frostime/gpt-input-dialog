@@ -1,8 +1,8 @@
 {
-    "name": "GPT 网站对话框",
+    "name": "GPT Input Dialog",
     "namespace": "gitlab.com/frostime",
-    "version": "5.4.0",
-    "copyright": "2024, frostime",
+    "version": "5.5.0",
+    "copyright": "(2024) frostime",
     "match": [
         "*://poe.com/chat/*",
         "*://poe.com",
@@ -10,9 +10,10 @@
         "*://chat.mistral.ai/chat/*",
         "*://kimi.moonshot.cn",
         "*://kimi.moonshot.cn/chat/*",
-        "*://chat.openai.com/*"
+        "*://chat.openai.com/*",
+        "://panter.aizex.cn"
     ],
-    "icon": "https://www.google.com/s2/favicons?sz=64&domain=poe.com",
+    "icon": "https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com",
     "grant": ["GM.xmlHttpRequest"],
     "run-at": "document-end"
 }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name      GPT 网站对话框
 // @namespace gitlab.com/frostime
-// @version   5.4.0
+// @version   5.5.0
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
 // @match     *://chat.mistral.ai/chat
@@ -9,6 +9,7 @@
 // @match     *://kimi.moonshot.cn
 // @match     *://kimi.moonshot.cn/chat/*
 // @match     *://chat.openai.com/*
+// @match     ://panter.aizex.cn
 // @icon      https://www.google.com/s2/favicons?sz=64&domain=poe.com
 // @run-at    document-end
 // @author    frostime
@@ -76,7 +77,25 @@
             return textarea;
         }
     };
-    const Platforms = [Poe, Mistral, ChatGPT];
+    const Aizex = {
+        name: 'Aizex',
+        baseUrl: 'panter.aizex.cn',
+        selector: {
+            officialTextarea: 'textarea#prompt-textarea',
+            submitButton: 'textarea#prompt-textarea + button',
+            chatSessionTitle: '#chat-title',
+        },
+        css: {
+            backgroundColor: 'var(--main-surface-primary)',
+            primaryColor: '#2e95d3',
+        },
+        createTextarea: () => {
+            const textarea = document.createElement('textarea');
+            textarea.placeholder = 'Talk to ...';
+            return textarea;
+        }
+    };
+    const Platforms = [Poe, Mistral, ChatGPT, Aizex];
     let currentPlatform;
     let togglePlatform = (name) => {
         for (let p of Platforms) {

@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-05-05 17:41:08
+ * @LastEditTime : 2024-05-05 17:47:28
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -117,7 +117,30 @@ const ChatGPT: IPlatform = {
 }
 
 
-export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT];
+const Aizex: IPlatform = {
+    name: 'Aizex',
+    baseUrl: 'panter.aizex.cn',
+    selector: {
+        officialTextarea: 'textarea#prompt-textarea',
+        submitButton: 'textarea#prompt-textarea + button',
+        chatSessionTitle: '#chat-title', //不存在
+    },
+    css: {
+        backgroundColor: 'var(--main-surface-primary)',
+        primaryColor: '#2e95d3',
+    },
+    createTextarea: () => {
+        const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
+        // textarea.rows = 5;
+        // textarea.style.backgroundColor = 'hsl(var(--background)) !important';
+        textarea.placeholder = 'Talk to ...';
+        return textarea;
+    }
+}
+
+
+export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex];
 
 export let currentPlatform: IPlatform;
 export let togglePlatform = (name) => {
