@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name      GPT 网站对话框
+// @name      GPT Input Dialog
 // @namespace gitlab.com/frostime
 // @version   5.5.0
 // @match     *://poe.com/chat/*
@@ -10,7 +10,7 @@
 // @match     *://kimi.moonshot.cn/chat/*
 // @match     *://chat.openai.com/*
 // @match     ://panter.aizex.cn
-// @icon      https://www.google.com/s2/favicons?sz=64&domain=poe.com
+// @icon      https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at    document-end
 // @author    frostime
 // @license   AGPL-3.0-only
