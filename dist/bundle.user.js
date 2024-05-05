@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name      GPT Input Dialog
 // @namespace gitlab.com/frostime
-// @version   5.5.0
+// @version   5.5.1
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
 // @match     *://chat.mistral.ai/chat
@@ -9,7 +9,7 @@
 // @match     *://kimi.moonshot.cn
 // @match     *://kimi.moonshot.cn/chat/*
 // @match     *://chat.openai.com/*
-// @match     ://panter.aizex.cn
+// @match     *://panter.aizex.cn
 // @icon      https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at    document-end
 // @author    frostime

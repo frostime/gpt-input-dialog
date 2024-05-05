@@ -1,7 +1,7 @@
 {
     "name": "GPT Input Dialog",
     "namespace": "gitlab.com/frostime",
-    "version": "5.5.0",
+    "version": "5.5.1",
     "copyright": "(2024) frostime",
     "match": [
         "*://poe.com/chat/*",
@@ -11,7 +11,7 @@
         "*://kimi.moonshot.cn",
         "*://kimi.moonshot.cn/chat/*",
         "*://chat.openai.com/*",
-        "://panter.aizex.cn"
+        "*://panter.aizex.cn"
     ],
     "icon": "https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com",
     "grant": ["GM.xmlHttpRequest"],
