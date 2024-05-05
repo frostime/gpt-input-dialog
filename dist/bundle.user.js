@@ -1,20 +1,21 @@
 // ==UserScript==
-// @name      GPT Input Dialog
-// @namespace gitlab.com/frostime
-// @version   5.5.1
-// @match     *://poe.com/chat/*
-// @match     *://poe.com
-// @match     *://chat.mistral.ai/chat
-// @match     *://chat.mistral.ai/chat/*
-// @match     *://kimi.moonshot.cn
-// @match     *://kimi.moonshot.cn/chat/*
-// @match     *://chat.openai.com/*
-// @match     *://panter.aizex.cn
-// @icon      https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
-// @run-at    document-end
-// @author    frostime
-// @license   AGPL-3.0-only
-// @grant     GM.xmlHttpRequest
+// @name        GPT Input Dialog
+// @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
+// @namespace   gitlab.com/frostime
+// @version     5.6.0
+// @match       *://poe.com/chat/*
+// @match       *://poe.com
+// @match       *://chat.mistral.ai/chat
+// @match       *://chat.mistral.ai/chat/*
+// @match       *://kimi.moonshot.cn
+// @match       *://kimi.moonshot.cn/chat/*
+// @match       *://chat.openai.com/*
+// @match       *://panter.aizex.cn
+// @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
+// @run-at      document-end
+// @author      frostime
+// @license     AGPL-3.0-only
+// @grant       GM.xmlHttpRequest
 // ==/UserScript==
 (function () {
     'use strict';

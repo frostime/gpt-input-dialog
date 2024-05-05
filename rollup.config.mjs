@@ -12,6 +12,8 @@ import pkg from './package.json' assert { type: 'json' }
 
 fs.mkdir('dist/', { recursive: true }, () => null)
 
+// const readme = fs.readFileSync('./README.md', 'utf8');
+
 export default {
   input: 'src/index.ts',
   output: {
