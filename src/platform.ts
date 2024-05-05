@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-04-21 18:39:46
+ * @LastEditTime : 2024-05-05 17:41:08
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -33,8 +33,8 @@ const Mistral: IPlatform = {
     name: 'Mistral',
     baseUrl: 'chat.mistral.ai/chat',
     selector: {
-        officialTextarea: 'div.flex.flex-row.items-start>textarea',
-        submitButton: 'div.flex.flex-row.items-start>textarea + button',
+        officialTextarea: 'div.flex.flex-row>textarea',
+        submitButton: 'div.flex.flex-row>textarea + button',
         chatSessionTitle: 'div.flex.w-full>p.block.truncate',
     },
     css: {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name      GPT 网站对话框
 // @namespace gitlab.com/frostime
-// @version   5.3.0
+// @version   5.4.0
 // @match     *://poe.com/chat/*
 // @match     *://poe.com
 // @match     *://chat.mistral.ai/chat
@@ -43,8 +43,8 @@
         name: 'Mistral',
         baseUrl: 'chat.mistral.ai/chat',
         selector: {
-            officialTextarea: 'div.flex.flex-row.items-start>textarea',
-            submitButton: 'div.flex.flex-row.items-start>textarea + button',
+            officialTextarea: 'div.flex.flex-row>textarea',
+            submitButton: 'div.flex.flex-row>textarea + button',
             chatSessionTitle: 'div.flex.w-full>p.block.truncate',
         },
         css: {
