@@ -122,7 +122,7 @@ const Aizex: IPlatform = {
     baseUrl: 'panter.aizex.cn',
     selector: {
         officialTextarea: 'textarea#prompt-textarea',
-        submitButton: 'textarea#prompt-textarea + button',
+        submitButton: null,
         chatSessionTitle: '#chat-title', //不存在
     },
     css: {
@@ -136,6 +136,12 @@ const Aizex: IPlatform = {
         // textarea.style.backgroundColor = 'hsl(var(--background)) !important';
         textarea.placeholder = 'Talk to ...';
         return textarea;
+    },
+    getSubmitButton: () => {
+        let textarea = document.querySelector(Aizex.selector.officialTextarea);
+        let grandpa = textarea.parentElement.parentElement;
+        let buttons = grandpa.querySelectorAll('button');
+        return buttons[buttons.length - 1];
     }
 }
 

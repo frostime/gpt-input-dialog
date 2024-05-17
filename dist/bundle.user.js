@@ -2,13 +2,11 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.6.0
+// @version     5.6.1
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
 // @match       *://chat.mistral.ai/chat/*
-// @match       *://kimi.moonshot.cn
-// @match       *://kimi.moonshot.cn/chat/*
 // @match       *://chat.openai.com/*
 // @match       *://panter.aizex.cn
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
@@ -83,7 +81,7 @@
         baseUrl: 'panter.aizex.cn',
         selector: {
             officialTextarea: 'textarea#prompt-textarea',
-            submitButton: 'textarea#prompt-textarea + button',
+            submitButton: null,
             chatSessionTitle: '#chat-title',
         },
         css: {
@@ -94,6 +92,12 @@
             const textarea = document.createElement('textarea');
             textarea.placeholder = 'Talk to ...';
             return textarea;
+        },
+        getSubmitButton: () => {
+            let textarea = document.querySelector(Aizex.selector.officialTextarea);
+            let grandpa = textarea.parentElement.parentElement;
+            let buttons = grandpa.querySelectorAll('button');
+            return buttons[buttons.length - 1];
         }
     };
     const Platforms = [Poe, Mistral, ChatGPT, Aizex];
@@ -509,8 +513,15 @@ div#dialog button#confirm-button {
     const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei, Arial, sans-serif';
     function submit() {
         setTimeout(() => {
-            const qButton = currentPlatform.selector.submitButton;
-            const button = document.querySelector(qButton);
+            const cur = currentPlatform;
+            let button;
+            if (cur?.getSubmitButton) {
+                button = cur.getSubmitButton();
+            }
+            else {
+                const qButton = currentPlatform.selector.submitButton;
+                button = document.querySelector(qButton);
+            }
             if (button) {
                 button.click();
             }

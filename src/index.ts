@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-04-21 17:48:04
+ * @LastEditTime : 2024-05-17 18:22:57
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -16,8 +16,14 @@ function submit() {
 
     setTimeout(() => {
         // const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
-        const qButton = platform.currentPlatform.selector.submitButton;
-        const button: HTMLButtonElement = document.querySelector(qButton);
+        const cur = platform.currentPlatform;
+        let button: HTMLButtonElement;
+        if (cur?.getSubmitButton) {
+            button = cur.getSubmitButton();
+        } else {
+            const qButton = platform.currentPlatform.selector.submitButton;
+            button = document.querySelector(qButton);
+        }
         if (button) {
             button.click();
         }
