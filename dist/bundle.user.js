@@ -2,12 +2,13 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.6.2
+// @version     5.6.3
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
 // @match       *://chat.mistral.ai/chat/*
 // @match       *://chat.openai.com/*
+// @match       *://chatgpt.com/*
 // @match       *://panter.aizex.cn
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at      document-end
@@ -60,10 +61,10 @@
     };
     const ChatGPT = {
         name: 'ChatGPT',
-        baseUrl: 'chat.openai.com',
+        baseUrl: 'chatgpt.com',
         selector: {
             officialTextarea: 'textarea#prompt-textarea',
-            submitButton: 'textarea#prompt-textarea + button',
+            submitButton: null,
             chatSessionTitle: '#chat-title',
         },
         css: {
@@ -72,8 +73,15 @@
         },
         createTextarea: () => {
             const textarea = document.createElement('textarea');
+            textarea.style.backgroundColor = 'var(--main-surface-primary)';
             textarea.placeholder = 'Talk to ...';
             return textarea;
+        },
+        getSubmitButton: () => {
+            let textarea = document.querySelector(ChatGPT.selector.officialTextarea);
+            let grandpa = textarea.parentElement.parentElement;
+            let buttons = grandpa.querySelectorAll('button');
+            return buttons[buttons.length - 1];
         }
     };
     const Aizex = {

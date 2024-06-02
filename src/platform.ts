@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-05-29 20:59:59
+ * @LastEditTime : 2024-06-02 17:37:46
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -96,10 +96,10 @@ const Kimi: IPlatform = {
 
 const ChatGPT: IPlatform = {
     name: 'ChatGPT',
-    baseUrl: 'chat.openai.com',
+    baseUrl: 'chatgpt.com',
     selector: {
         officialTextarea: 'textarea#prompt-textarea',
-        submitButton: 'textarea#prompt-textarea + button',
+        submitButton: null,
         chatSessionTitle: '#chat-title', //不存在
     },
     css: {
@@ -108,11 +108,15 @@ const ChatGPT: IPlatform = {
     },
     createTextarea: () => {
         const textarea: HTMLTextAreaElement = document.createElement('textarea');
-        // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
-        // textarea.rows = 5;
-        // textarea.style.backgroundColor = 'hsl(var(--background)) !important';
+        textarea.style.backgroundColor = 'var(--main-surface-primary)';
         textarea.placeholder = 'Talk to ...';
         return textarea;
+    },
+    getSubmitButton: () => {
+        let textarea = document.querySelector(ChatGPT.selector.officialTextarea);
+        let grandpa = textarea.parentElement.parentElement;
+        let buttons = grandpa.querySelectorAll('button');
+        return buttons[buttons.length - 1];
     }
 }
 
