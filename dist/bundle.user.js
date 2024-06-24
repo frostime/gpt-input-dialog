@@ -2,14 +2,15 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.6.3
+// @version     5.6.4
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
 // @match       *://chat.mistral.ai/chat/*
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @match       *://panter.aizex.cn
+// @match       *://panter.aizex.cn/c/*
+// @match       *://panter.aizex.cn/g/*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at      document-end
 // @author      frostime
