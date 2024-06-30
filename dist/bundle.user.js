@@ -10,6 +10,7 @@
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
 // @match       *://panter.aizex.cn/*
+// @match       *://chatglm.cn/main/*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at      document-end
 // @author      frostime
@@ -109,7 +110,27 @@
             return buttons[buttons.length - 1];
         }
     };
-    const Platforms = [Poe, Mistral, ChatGPT, Aizex];
+    const ChatGLM = {
+        name: 'ChatGLM',
+        baseUrl: 'chatglm.cn',
+        selector: {
+            officialTextarea: 'div.input-box-inner>textarea',
+            submitButton: 'div.input-wrap>div.enter>img',
+            chatSessionTitle: '.showHideText>div:first-child',
+        },
+        css: {
+            backgroundColor: 'var(--bg_white_1)',
+            primaryColor: '#2e95d3',
+        },
+        createTextarea: () => {
+            const textarea = document.createElement('textarea');
+            textarea.style.backgroundColor = 'var(--bg_white_1)';
+            textarea.style.color = 'var(--txt_icon_black_1,#1a2029)';
+            textarea.placeholder = 'Talk to ...';
+            return textarea;
+        }
+    };
+    const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM];
     let currentPlatform;
     let togglePlatform = (name) => {
         for (let p of Platforms) {

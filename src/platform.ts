@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-06-02 17:37:46
+ * @LastEditTime : 2024-06-30 18:08:45
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -43,8 +43,6 @@ const Mistral: IPlatform = {
     },
     createTextarea: () => {
         const textarea: HTMLTextAreaElement = document.createElement('textarea');
-        // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
-        // textarea.rows = 5;
         textarea.style.backgroundColor = 'hsl(var(--background)) !important';
         textarea.placeholder = 'Talk to ...';
         return textarea;
@@ -135,8 +133,6 @@ const Aizex: IPlatform = {
     },
     createTextarea: () => {
         const textarea: HTMLTextAreaElement = document.createElement('textarea');
-        // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
-        // textarea.rows = 5;
         textarea.style.backgroundColor = 'var(--main-surface-primary)';
         textarea.placeholder = 'Talk to ...';
         return textarea;
@@ -150,7 +146,29 @@ const Aizex: IPlatform = {
 }
 
 
-export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex];
+const ChatGLM: IPlatform = {
+    name: 'ChatGLM',
+    baseUrl: 'chatglm.cn',
+    selector: {
+        officialTextarea: 'div.input-box-inner>textarea',
+        submitButton: 'div.input-wrap>div.enter>img',
+        chatSessionTitle: '.showHideText>div:first-child',
+    },
+    css: {
+        backgroundColor: 'var(--bg_white_1)',
+        primaryColor: '#2e95d3',
+    },
+    createTextarea: () => {
+        const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        textarea.style.backgroundColor = 'var(--bg_white_1)';
+        textarea.style.color = 'var(--txt_icon_black_1,#1a2029)';
+        textarea.placeholder = 'Talk to ...';
+        return textarea;
+    }
+}
+
+
+export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM];
 
 export let currentPlatform: IPlatform;
 export let togglePlatform = (name) => {

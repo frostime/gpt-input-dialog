@@ -11,7 +11,8 @@
         "*://chat.mistral.ai/chat/*",
         "*://chat.openai.com/*",
         "*://chatgpt.com/*",
-        "*://panter.aizex.cn/*"
+        "*://panter.aizex.cn/*",
+        "*://chatglm.cn/main/*"
     ],
     "icon": "https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com",
     "grant": [],

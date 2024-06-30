@@ -28,6 +28,7 @@ This script provides a large dialog box that supports quick multi-line input and
   * Poe platform
   * Mistral platform
   * Aizex platform
+  * ChatGLM platform
 
 ## 中文说明
 
@@ -57,3 +58,4 @@ This script provides a large dialog box that supports quick multi-line input and
   * Poe 平台
   * Mistral 平台
   * Aizex 平台
+  * 智谱清言 平台
