@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-04-21 17:39:22
+ * @LastEditTime : 2024-06-30 17:46:33
  * @Description  : 
  */
 import { enableTabToIndent, unindentSelection } from './indent-textarea';
@@ -186,9 +186,6 @@ export class TextInputDialog {
         // Append dialog to the overlay
         overlay.appendChild(dialog);
 
-        // Append overlay to the document body
-        document.body.appendChild(overlay);
-
         cancelButton.addEventListener('click', () => {
             overlay.style.display = 'none';
             document.body.style.overflow = 'auto';
@@ -208,6 +205,11 @@ export class TextInputDialog {
             document.body.style.overflow = 'auto';
             this.confirmCallback(textarea.value, true);
         });
+
+        // Append overlay to the document body
+        setTimeout(() => {
+            document.body.appendChild(overlay);
+        }, 2000);
     }
 
     hide() {
@@ -231,10 +233,6 @@ export class TextInputDialog {
      * 将官方网页的输入框的内容填充到自定义输入框
      */
     updateDialog() {
-        // const column: HTMLDivElement | null = document.querySelector('.MainColumn_column__UEunw');
-        // //dialog 和 column 中心对齐
-        // this.dialog.style.left = `${column.offsetLeft + column.offsetWidth / 2 - this.dialog.offsetWidth / 2}px`;
-
         if (platform.currentPlatform.getText === undefined) {
             const baseText: string | null = queryOfficalTextarea()?.value;
             this.textarea.value = baseText || '';

@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.6.5
+// @version     5.7.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -14,7 +14,7 @@
 // @run-at      document-end
 // @author      frostime
 // @license     AGPL-3.0-only
-// @grant       GM.xmlHttpRequest
+// @grant       none
 // ==/UserScript==
 (function () {
     'use strict';
@@ -470,7 +470,6 @@ div#dialog button#confirm-button {
             dialog.appendChild(textInput);
             dialog.appendChild(buttonContainer);
             overlay.appendChild(dialog);
-            document.body.appendChild(overlay);
             cancelButton.addEventListener('click', () => {
                 overlay.style.display = 'none';
                 document.body.style.overflow = 'auto';
@@ -488,6 +487,9 @@ div#dialog button#confirm-button {
                 document.body.style.overflow = 'auto';
                 this.confirmCallback(textarea.value, true);
             });
+            setTimeout(() => {
+                document.body.appendChild(overlay);
+            }, 2000);
         }
         hide() {
             this.overlay.style.display = 'none';
