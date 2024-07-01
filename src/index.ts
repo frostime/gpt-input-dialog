@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-05-17 18:22:57
+ * @LastEditTime : 2024-07-01 17:08:21
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -50,26 +50,26 @@ function confirmed(text: string, doSubmit: boolean = false) {
 }
 
 const url = window.location.href;
-for (let p of platform.Platforms) {
-    if (url.includes(p.baseUrl)) {
-        platform.togglePlatform(p.name);
-        break;
+const toggle = () => {
+    for (let p of platform.Platforms) {
+        if (typeof p.baseUrl === 'string' && url.includes(p.baseUrl)) {
+            platform.togglePlatform(p.name);
+            return;
+        } else if (Array.isArray(p.baseUrl)) {
+            for (let u of p.baseUrl) {
+                if (url.includes(u)) {
+                    platform.togglePlatform(p.name);
+                    return;
+                }
+            }
+        }
     }
 }
+toggle();
 
 const dialog = new TextInputDialog();
 dialog.bindConfirmCallback(confirmed);
 updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily, platform.currentPlatform));
-
-//监听鼠鼠标
-// document.addEventListener('dblclick', (e) => {
-//     let activeElement = document.activeElement;
-//     if (activeElement.tagName === 'TEXTAREA' && activeElement.className === 'GrowingTextArea_textArea__ZWQbP') {
-//         e.preventDefault();
-//         e.stopPropagation();
-//         dialog.show();
-//     }
-// });
 
 //监听按键
 document.addEventListener('keydown', (event) => {
@@ -79,15 +79,5 @@ document.addEventListener('keydown', (event) => {
         event.stopPropagation();
         dialog.show();
     }
-
-    //禁止 Enter 直接提交
-    // if (event.key === 'Enter' && !event.ctrlKey && !event.altKey && !event.shiftKey) {
-    //     const q = 'div.ChatMessageInputContainer_inputContainer__s2AGa textarea';
-    //     let target = event.target;
-    //     if (target.tagName === 'TEXTAREA' && target.className === 'GrowingTextArea_textArea__ZWQbP') {
-    //         event.stopPropagation();
-    //         return;
-    //     }
-    // }
 }, true);
 

@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.7.0
+// @version     5.7.1
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -10,6 +10,7 @@
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
 // @match       *://panter.aizex.cn/*
+// @match       *://panzer.aizex.net/*
 // @match       *://chatglm.cn/main/*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at      document-end
@@ -87,7 +88,7 @@
     };
     const Aizex = {
         name: 'Aizex',
-        baseUrl: 'panter.aizex.cn',
+        baseUrl: ['panter.aizex.cn', 'panzer.aizex.net'],
         selector: {
             officialTextarea: 'textarea#prompt-textarea',
             submitButton: null,
@@ -579,12 +580,23 @@ div#dialog button#confirm-button {
         focusOffcialTextarea();
     }
     const url = window.location.href;
-    for (let p of Platforms) {
-        if (url.includes(p.baseUrl)) {
-            togglePlatform(p.name);
-            break;
+    const toggle = () => {
+        for (let p of Platforms) {
+            if (typeof p.baseUrl === 'string' && url.includes(p.baseUrl)) {
+                togglePlatform(p.name);
+                return;
+            }
+            else if (Array.isArray(p.baseUrl)) {
+                for (let u of p.baseUrl) {
+                    if (url.includes(u)) {
+                        togglePlatform(p.name);
+                        return;
+                    }
+                }
+            }
         }
-    }
+    };
+    toggle();
     const dialog = new TextInputDialog();
     dialog.bindConfirmCallback(confirmed);
     updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily, currentPlatform));

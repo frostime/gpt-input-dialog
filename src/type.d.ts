@@ -3,7 +3,7 @@
  * @Author       : Yp Z
  * @Date         : 2023-08-16 17:13:02
  * @FilePath     : /src/type.d.ts
- * @LastEditTime : 2024-05-17 18:23:12
+ * @LastEditTime : 2024-07-01 17:00:48
  * @Description  : 
  */
 interface IHttpRequestPayload<CONTEXT_TYPE> {
@@ -24,7 +24,7 @@ interface IHttpRequestPayload<CONTEXT_TYPE> {
 
 interface IPlatform {
     name: string;
-    baseUrl: string;
+    baseUrl: string | string[];
     selector: {
         officialTextarea: string;
         submitButton: string;

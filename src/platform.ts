@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-06-30 18:08:45
+ * @LastEditTime : 2024-07-01 17:00:20
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -121,7 +121,7 @@ const ChatGPT: IPlatform = {
 
 const Aizex: IPlatform = {
     name: 'Aizex',
-    baseUrl: 'panter.aizex.cn',
+    baseUrl: ['panter.aizex.cn', 'panzer.aizex.net'],
     selector: {
         officialTextarea: 'textarea#prompt-textarea',
         submitButton: null,
