@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-07-01 17:00:20
+ * @LastEditTime : 2024-07-02 22:28:06
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -107,6 +107,7 @@ const ChatGPT: IPlatform = {
     createTextarea: () => {
         const textarea: HTMLTextAreaElement = document.createElement('textarea');
         textarea.style.backgroundColor = 'var(--main-surface-primary)';
+        textarea.style.padding = '0px';
         textarea.placeholder = 'Talk to ...';
         return textarea;
     },
@@ -134,6 +135,7 @@ const Aizex: IPlatform = {
     createTextarea: () => {
         const textarea: HTMLTextAreaElement = document.createElement('textarea');
         textarea.style.backgroundColor = 'var(--main-surface-primary)';
+        textarea.style.padding = '0px';
         textarea.placeholder = 'Talk to ...';
         return textarea;
     },
@@ -162,6 +164,7 @@ const ChatGLM: IPlatform = {
         const textarea: HTMLTextAreaElement = document.createElement('textarea');
         textarea.style.backgroundColor = 'var(--bg_white_1)';
         textarea.style.color = 'var(--txt_icon_black_1,#1a2029)';
+        textarea.style.fontSize = '20px';
         textarea.placeholder = 'Talk to ...';
         return textarea;
     }

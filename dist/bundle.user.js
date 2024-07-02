@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.7.1
+// @version     5.7.2
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -76,6 +76,7 @@
         createTextarea: () => {
             const textarea = document.createElement('textarea');
             textarea.style.backgroundColor = 'var(--main-surface-primary)';
+            textarea.style.padding = '0px';
             textarea.placeholder = 'Talk to ...';
             return textarea;
         },
@@ -101,6 +102,7 @@
         createTextarea: () => {
             const textarea = document.createElement('textarea');
             textarea.style.backgroundColor = 'var(--main-surface-primary)';
+            textarea.style.padding = '0px';
             textarea.placeholder = 'Talk to ...';
             return textarea;
         },
@@ -127,6 +129,7 @@
             const textarea = document.createElement('textarea');
             textarea.style.backgroundColor = 'var(--bg_white_1)';
             textarea.style.color = 'var(--txt_icon_black_1,#1a2029)';
+            textarea.style.fontSize = '20px';
             textarea.placeholder = 'Talk to ...';
             return textarea;
         }
