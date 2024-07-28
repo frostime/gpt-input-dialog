@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.7.2
+// @version     5.8.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -12,6 +12,7 @@
 // @match       *://panter.aizex.cn/*
 // @match       *://panzer.aizex.net/*
 // @match       *://chatglm.cn/main/*
+// @match       *://gemini.google.com/app*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at      document-end
 // @author      frostime
@@ -134,7 +135,41 @@
             return textarea;
         }
     };
-    const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM];
+    const Gemini = {
+        name: 'Gemini',
+        baseUrl: 'gemini.google.com',
+        selector: {
+            officialTextarea: 'rich-textarea > div.ql-editor.textarea',
+            submitButton: '.action-wrapper button.send-button',
+            chatSessionTitle: '',
+        },
+        css: {
+            backgroundColor: 'var(--gem-sys-color--surface-container)',
+            primaryColor: '#2e95d3',
+        },
+        createTextarea: () => {
+            const textarea = document.createElement('textarea');
+            textarea.placeholder = 'Talk to ...';
+            return textarea;
+        },
+        getText: () => {
+            const officialTextarea = document.querySelector(Gemini.selector.officialTextarea);
+            let paras = officialTextarea.querySelectorAll('p');
+            let text = Array.from(paras).map(para => para.textContent).join('\n');
+            return text;
+        },
+        setText: (text) => {
+            const officialTextarea = document.querySelector(Gemini.selector.officialTextarea);
+            let lines = text.trim().split('\n');
+            officialTextarea.innerHTML = '';
+            lines.forEach(line => {
+                let p = document.createElement('p');
+                p.textContent = line;
+                officialTextarea.appendChild(p);
+            });
+        }
+    };
+    const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini];
     let currentPlatform;
     let togglePlatform = (name) => {
         for (let p of Platforms) {

@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-07-02 22:28:06
+ * @LastEditTime : 2024-07-28 22:48:18
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -171,7 +171,45 @@ const ChatGLM: IPlatform = {
 }
 
 
-export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM];
+const Gemini: IPlatform = {
+    name: 'Gemini',
+    baseUrl: 'gemini.google.com',
+    selector: {
+        officialTextarea: 'rich-textarea > div.ql-editor.textarea',
+        submitButton: '.action-wrapper button.send-button',
+        chatSessionTitle: '',
+    },
+    css: {
+        backgroundColor: 'var(--gem-sys-color--surface-container)',
+        primaryColor: '#2e95d3',
+    },
+    createTextarea: () => {
+        const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
+        // textarea.rows = 5;
+        textarea.placeholder = 'Talk to ...';
+        return textarea;
+    },
+    getText: () => {
+        const officialTextarea: HTMLDivElement = document.querySelector(Gemini.selector.officialTextarea);
+        let paras = officialTextarea.querySelectorAll('p');
+        let text = Array.from(paras).map(para => para.textContent).join('\n');
+        return text;
+    },
+    setText: (text: string) => {
+        const officialTextarea: HTMLDivElement = document.querySelector(Gemini.selector.officialTextarea);
+        let lines = text.trim().split('\n');
+        officialTextarea.innerHTML = '';
+        lines.forEach(line => {
+            let p = document.createElement('p');
+            p.textContent = line;
+            officialTextarea.appendChild(p);
+        });
+    }
+}
+
+
+export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini];
 
 export let currentPlatform: IPlatform;
 export let togglePlatform = (name) => {

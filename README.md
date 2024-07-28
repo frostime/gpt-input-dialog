@@ -25,8 +25,9 @@ This script provides a large dialog box that supports quick multi-line input and
 * Multi-webpage adaptation, supporting multiple GPT-type website applications
 
   * ChatGPT platform
-  * Poe platform
+  * Gemini platform
   * Mistral platform
+  * Poe platform
   * Aizex platform
   * ChatGLM platform
 
@@ -55,7 +56,8 @@ This script provides a large dialog box that supports quick multi-line input and
 * 多网页适配，支持多个 GPT 类网站应用
 
   * ChatGPT 平台
-  * Poe 平台
+  * Google Gemini 平台
   * Mistral 平台
+  * Poe 平台
   * Aizex 平台
   * 智谱清言 平台
