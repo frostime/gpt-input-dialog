@@ -1,9 +1,11 @@
+import { removeAllChildren } from "./utils";
+
 /*
  * Copyright (c) 2024 by frostime. All Rights Reserved.
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-07-28 22:48:18
+ * @LastEditTime : 2024-07-30 22:21:00
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -185,6 +187,10 @@ const Gemini: IPlatform = {
     },
     createTextarea: () => {
         const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        Object.assign(textarea.style, {
+            'color': 'var(--bard-color-inverse-surface-container)',
+            'background-color': 'var(--bard-color-surface-container)'
+        })
         // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
         // textarea.rows = 5;
         textarea.placeholder = 'Talk to ...';
@@ -199,7 +205,7 @@ const Gemini: IPlatform = {
     setText: (text: string) => {
         const officialTextarea: HTMLDivElement = document.querySelector(Gemini.selector.officialTextarea);
         let lines = text.trim().split('\n');
-        officialTextarea.innerHTML = '';
+        removeAllChildren(officialTextarea);
         lines.forEach(line => {
             let p = document.createElement('p');
             p.textContent = line;

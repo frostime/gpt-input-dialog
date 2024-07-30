@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.8.0
+// @version     5.8.1
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -21,6 +21,117 @@
 // ==/UserScript==
 (function () {
     'use strict';
+
+    const splitTextareaLines = (textarea, position) => {
+        const text = textarea.value;
+        if (position < 0 || position > text.length) {
+            throw new Error('Position is out of bounds of the text length');
+        }
+        const befores = text.slice(0, position).split('\n');
+        const afters = text.slice(position).split('\n');
+        const currentLineBefore = befores.pop() ?? '';
+        const currentLineAfter = afters.shift() ?? '';
+        const line = currentLineBefore + currentLineAfter;
+        return { befores, line, afters };
+    };
+    function updateStyleSheet(id, cssText) {
+        let style = document.getElementById(id);
+        if (!style) {
+            style = document.createElement('style');
+            style.id = id;
+            document.head.appendChild(style);
+        }
+        style.textContent = cssText;
+    }
+    const queryOfficalTextarea = () => {
+        const q = currentPlatform.selector.officialTextarea;
+        const textarea = document.querySelector(q);
+        return textarea;
+    };
+    const focusOffcialTextarea = () => {
+        const textarea = queryOfficalTextarea();
+        textarea?.focus();
+    };
+    const removeAllChildren = (element) => {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
+    };
+    const StyleSheet = (FontFamily, currentPlatform) => `
+textarea.GrowingTextArea_textArea__ZWQbP {
+    background: ${currentPlatform.css.backgroundColor} !important;
+}
+button#floating-button {
+    position: absolute;
+    right: 50px;
+    bottom: 10px;
+    padding: 10px 20px;
+    background-color: ${currentPlatform.css.primaryColor};
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
+div#dialog {
+    background-color: ${currentPlatform.css.backgroundColor};
+    padding: 21px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    max-width: 900px;
+    min-width: 400px;
+    height: 500px;
+    max-height: 80%;
+    position: absolute;
+    bottom: 50px;
+}
+div#dialog #dialog-text-input {
+    border: 1px solid ${currentPlatform.css.primaryColor};
+    border-radius: 4px;
+    padding: 8px;
+    flex-grow: 1; /* Allow the text input area to grow */
+    display: flex; /* Make the text input area a flex container */
+    flex-direction: column; /* Stack child elements vertically */
+}
+div#dialog #dialog-text-input textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 22px;
+    line-height: 1.5;
+    font-family: ${FontFamily};
+    flex-grow: 1; /* Allow the textarea to grow vertically */
+}
+
+div#dialog button#cancel-button {
+    margin-right: 8px;
+    padding: 8px 16px;
+    background-color: #f2f2f2;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+div#dialog button#fill-button {
+    margin-right: 8px;
+    padding: 8px 16px;
+    background-color: ${currentPlatform.css.primaryColor};
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+div#dialog button#confirm-button {
+    padding: 8px 16px;
+    background-color: ${currentPlatform.css.primaryColor};
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}`;
 
     const Poe = {
         name: 'Poe',
@@ -149,6 +260,10 @@
         },
         createTextarea: () => {
             const textarea = document.createElement('textarea');
+            Object.assign(textarea.style, {
+                'color': 'var(--bard-color-inverse-surface-container)',
+                'background-color': 'var(--bard-color-surface-container)'
+            });
             textarea.placeholder = 'Talk to ...';
             return textarea;
         },
@@ -161,7 +276,7 @@
         setText: (text) => {
             const officialTextarea = document.querySelector(Gemini.selector.officialTextarea);
             let lines = text.trim().split('\n');
-            officialTextarea.innerHTML = '';
+            removeAllChildren(officialTextarea);
             lines.forEach(line => {
                 let p = document.createElement('p');
                 p.textContent = line;
@@ -179,112 +294,6 @@
             }
         }
     };
-
-    const splitTextareaLines = (textarea, position) => {
-        const text = textarea.value;
-        if (position < 0 || position > text.length) {
-            throw new Error('Position is out of bounds of the text length');
-        }
-        const befores = text.slice(0, position).split('\n');
-        const afters = text.slice(position).split('\n');
-        const currentLineBefore = befores.pop() ?? '';
-        const currentLineAfter = afters.shift() ?? '';
-        const line = currentLineBefore + currentLineAfter;
-        return { befores, line, afters };
-    };
-    function updateStyleSheet(id, cssText) {
-        let style = document.getElementById(id);
-        if (!style) {
-            style = document.createElement('style');
-            style.id = id;
-            document.head.appendChild(style);
-        }
-        style.textContent = cssText;
-    }
-    const queryOfficalTextarea = () => {
-        const q = currentPlatform.selector.officialTextarea;
-        const textarea = document.querySelector(q);
-        return textarea;
-    };
-    const focusOffcialTextarea = () => {
-        const textarea = queryOfficalTextarea();
-        textarea?.focus();
-    };
-    const StyleSheet = (FontFamily, currentPlatform) => `
-textarea.GrowingTextArea_textArea__ZWQbP {
-    background: ${currentPlatform.css.backgroundColor} !important;
-}
-button#floating-button {
-    position: absolute;
-    right: 50px;
-    bottom: 10px;
-    padding: 10px 20px;
-    background-color: ${currentPlatform.css.primaryColor};
-    color: #fff;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-}
-div#dialog {
-    background-color: ${currentPlatform.css.backgroundColor};
-    padding: 21px;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    display: flex;
-    width: 50%;
-    flex-direction: column;
-    max-width: 900px;
-    min-width: 400px;
-    height: 500px;
-    max-height: 80%;
-    position: absolute;
-    bottom: 50px;
-}
-div#dialog #dialog-text-input {
-    border: 1px solid ${currentPlatform.css.primaryColor};
-    border-radius: 4px;
-    padding: 8px;
-    flex-grow: 1; /* Allow the text input area to grow */
-    display: flex; /* Make the text input area a flex container */
-    flex-direction: column; /* Stack child elements vertically */
-}
-div#dialog #dialog-text-input textarea {
-    width: 100%;
-    border: none;
-    outline: none;
-    resize: none;
-    font-size: 22px;
-    line-height: 1.5;
-    font-family: ${FontFamily};
-    flex-grow: 1; /* Allow the textarea to grow vertically */
-}
-
-div#dialog button#cancel-button {
-    margin-right: 8px;
-    padding: 8px 16px;
-    background-color: #f2f2f2;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-}
-div#dialog button#fill-button {
-    margin-right: 8px;
-    padding: 8px 16px;
-    background-color: ${currentPlatform.css.primaryColor};
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-div#dialog button#confirm-button {
-    padding: 8px 16px;
-    background-color: ${currentPlatform.css.primaryColor};
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}`;
 
     function withFocus(field, callback) {
       const document = field.ownerDocument;

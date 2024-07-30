@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2023-08-16 17:05:29
  * @FilePath     : /src/utils.ts
- * @LastEditTime : 2024-04-21 16:37:55
+ * @LastEditTime : 2024-07-30 22:17:04
  * @Description  : 
  */
 import * as platform from './platform';
@@ -56,6 +56,12 @@ export const queryOfficalTextarea = (): HTMLTextAreaElement | null => {
 export const focusOffcialTextarea = () => {
     const textarea = queryOfficalTextarea();
     textarea?.focus();
+}
+
+export const removeAllChildren = (element: HTMLElement) => {
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
 }
 
 export const StyleSheet = (FontFamily: string, currentPlatform: IPlatform) => `
