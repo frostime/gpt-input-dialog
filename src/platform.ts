@@ -5,7 +5,7 @@ import { removeAllChildren } from "./utils";
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-07-30 22:21:00
+ * @LastEditTime : 2024-08-25 19:10:41
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -124,7 +124,7 @@ const ChatGPT: IPlatform = {
 
 const Aizex: IPlatform = {
     name: 'Aizex',
-    baseUrl: ['panter.aizex.cn', 'panzer.aizex.net'],
+    baseUrl: ['panter.aizex.cn', 'panzer.aizex.net', 'linlin.aizex.cn'],
     selector: {
         officialTextarea: 'textarea#prompt-textarea',
         submitButton: null,

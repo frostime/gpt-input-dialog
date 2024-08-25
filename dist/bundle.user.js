@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.8.2
+// @version     5.8.3
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -10,6 +10,7 @@
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
 // @match       *://panter.aizex.cn/*
+// @match       *://*.aizex.cn/*
 // @match       *://panzer.aizex.net/*
 // @match       *://chatglm.cn/main/*
 // @match       *://gemini.google.com/app*
@@ -201,7 +202,7 @@ div#dialog button#confirm-button {
     };
     const Aizex = {
         name: 'Aizex',
-        baseUrl: ['panter.aizex.cn', 'panzer.aizex.net'],
+        baseUrl: ['panter.aizex.cn', 'panzer.aizex.net', 'linlin.aizex.cn'],
         selector: {
             officialTextarea: 'textarea#prompt-textarea',
             submitButton: null,
