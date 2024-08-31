@@ -2,16 +2,15 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.8.3
+// @version     5.9.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
 // @match       *://chat.mistral.ai/chat/*
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @match       *://panter.aizex.cn/*
 // @match       *://*.aizex.cn/*
-// @match       *://panzer.aizex.net/*
+// @match       *://*.aizex.net/*
 // @match       *://chatglm.cn/main/*
 // @match       *://gemini.google.com/app*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
@@ -202,7 +201,14 @@ div#dialog button#confirm-button {
     };
     const Aizex = {
         name: 'Aizex',
-        baseUrl: ['panter.aizex.cn', 'panzer.aizex.net', 'linlin.aizex.cn'],
+        baseUrl: ['aizex.cn', 'aizex.net'],
+        matchUrl: (url) => {
+            const urlObj = new URL(url);
+            const host = urlObj.hostname;
+            const path = urlObj.pathname;
+            const isAizex = (host.endsWith('aizex.cn') || host.endsWith('aizex.net')) && host !== 'aizex.cn' && host !== 'aizex.net';
+            return isAizex && path.startsWith('/');
+        },
         selector: {
             officialTextarea: 'textarea#prompt-textarea',
             submitButton: null,
@@ -287,12 +293,13 @@ div#dialog button#confirm-button {
     };
     const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini];
     let currentPlatform;
-    let togglePlatform = (name) => {
-        for (let p of Platforms) {
-            if (p.name === name) {
-                currentPlatform = p;
-                break;
-            }
+    const togglePlatform = (name) => {
+        const platform = Platforms.find(p => p.name === name);
+        if (platform) {
+            currentPlatform = platform;
+        }
+        else {
+            console.error(`platform ${name} not found; togglePlatform failed.`);
         }
     };
 
@@ -628,19 +635,28 @@ div#dialog button#confirm-button {
         focusOffcialTextarea();
     }
     const url = window.location.href;
+    const DefaultMatchPlatformMethod = (url, p) => {
+        if (p?.matchUrl) {
+            return p.matchUrl(url);
+        }
+        if (typeof p.baseUrl === 'string' && url.includes(p.baseUrl)) {
+            return true;
+        }
+        else if (Array.isArray(p.baseUrl)) {
+            for (let u of p.baseUrl) {
+                if (url.includes(u)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
     const toggle = () => {
         for (let p of Platforms) {
-            if (typeof p.baseUrl === 'string' && url.includes(p.baseUrl)) {
+            let match = DefaultMatchPlatformMethod(url, p);
+            if (match) {
                 togglePlatform(p.name);
                 return;
-            }
-            else if (Array.isArray(p.baseUrl)) {
-                for (let u of p.baseUrl) {
-                    if (url.includes(u)) {
-                        togglePlatform(p.name);
-                        return;
-                    }
-                }
             }
         }
     };

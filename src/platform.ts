@@ -5,7 +5,7 @@ import { removeAllChildren } from "./utils";
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-08-25 19:10:41
+ * @LastEditTime : 2024-08-31 20:00:02
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -124,7 +124,16 @@ const ChatGPT: IPlatform = {
 
 const Aizex: IPlatform = {
     name: 'Aizex',
-    baseUrl: ['panter.aizex.cn', 'panzer.aizex.net', 'linlin.aizex.cn'],
+    baseUrl: ['aizex.cn', 'aizex.net'],
+    matchUrl: (url: string) => {
+        // 符合: https://*.aizex.cn/*
+        //使用 URL API
+        const urlObj = new URL(url);
+        const host = urlObj.hostname;
+        const path = urlObj.pathname;
+        const isAizex = (host.endsWith('aizex.cn') || host.endsWith('aizex.net')) && host !== 'aizex.cn' && host!== 'aizex.net';
+        return isAizex && path.startsWith('/');
+    },
     selector: {
         officialTextarea: 'textarea#prompt-textarea',
         submitButton: null,
@@ -218,11 +227,17 @@ const Gemini: IPlatform = {
 export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini];
 
 export let currentPlatform: IPlatform;
-export let togglePlatform = (name) => {
-    for (let p of Platforms) {
-        if (p.name === name) {
-            currentPlatform = p;
-            break;
-        }
+export const togglePlatform = (name: string) => {
+    // for (let p of Platforms) {
+    //     if (p.name === name) {
+    //         currentPlatform = p;
+    //         break;
+    //     }
+    // }
+    const platform = Platforms.find(p => p.name === name);
+    if (platform) {
+        currentPlatform = platform;
+    } else {
+        console.error(`platform ${name} not found; togglePlatform failed.`);
     }
 }

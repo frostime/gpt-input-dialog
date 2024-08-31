@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-07-01 17:08:21
+ * @LastEditTime : 2024-08-31 20:06:07
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -50,18 +50,29 @@ function confirmed(text: string, doSubmit: boolean = false) {
 }
 
 const url = window.location.href;
+
+const DefaultMatchPlatformMethod = (url: string, p: IPlatform) => {
+    if (p?.matchUrl) {
+        return p.matchUrl(url);
+    }
+    if (typeof p.baseUrl === 'string' && url.includes(p.baseUrl)) {
+        return true;
+    } else if (Array.isArray(p.baseUrl)) {
+        for (let u of p.baseUrl) {
+            if (url.includes(u)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 const toggle = () => {
     for (let p of platform.Platforms) {
-        if (typeof p.baseUrl === 'string' && url.includes(p.baseUrl)) {
+        let match = DefaultMatchPlatformMethod(url, p)
+        if (match) {
             platform.togglePlatform(p.name);
             return;
-        } else if (Array.isArray(p.baseUrl)) {
-            for (let u of p.baseUrl) {
-                if (url.includes(u)) {
-                    platform.togglePlatform(p.name);
-                    return;
-                }
-            }
         }
     }
 }

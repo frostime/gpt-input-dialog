@@ -24,6 +24,7 @@ interface IHttpRequestPayload<CONTEXT_TYPE> {
 
 interface IPlatform {
     name: string;
+    matchUrl?: (url: string) => boolean;
     baseUrl: string | string[];
     selector: {
         officialTextarea: string;
