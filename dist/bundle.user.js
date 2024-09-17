@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.9.0
+// @version     5.9.1
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -158,8 +158,8 @@ div#dialog button#confirm-button {
         name: 'Mistral',
         baseUrl: 'chat.mistral.ai/chat',
         selector: {
-            officialTextarea: 'div.flex.flex-row>textarea',
-            submitButton: 'div.flex.flex-row>textarea + div.items-end>button',
+            officialTextarea: 'div[role="presentation"] textarea',
+            submitButton: 'div[role="presentation"] div.justify-center button[type="submit"]',
             chatSessionTitle: 'div.flex.w-full>p.block.truncate',
         },
         css: {

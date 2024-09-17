@@ -5,7 +5,7 @@ import { removeAllChildren } from "./utils";
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-08-31 20:00:02
+ * @LastEditTime : 2024-09-17 16:12:49
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -35,8 +35,8 @@ const Mistral: IPlatform = {
     name: 'Mistral',
     baseUrl: 'chat.mistral.ai/chat',
     selector: {
-        officialTextarea: 'div.flex.flex-row>textarea',
-        submitButton: 'div.flex.flex-row>textarea + div.items-end>button',
+        officialTextarea: 'div[role="presentation"] textarea',
+        submitButton: 'div[role="presentation"] div.justify-center button[type="submit"]',
         chatSessionTitle: 'div.flex.w-full>p.block.truncate',
     },
     css: {
