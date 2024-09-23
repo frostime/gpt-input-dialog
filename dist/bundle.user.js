@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.9.1
+// @version     5.10.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -11,7 +11,8 @@
 // @match       *://chatgpt.com/*
 // @match       *://*.aizex.cn/*
 // @match       *://*.aizex.net/*
-// @match       *://chatglm.cn/main/*
+// @match       *://*.aizex.me/*
+// @match       *://chatglm.cn/*
 // @match       *://gemini.google.com/app*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at      document-end
@@ -34,12 +35,12 @@
         const line = currentLineBefore + currentLineAfter;
         return { befores, line, afters };
     };
-    function updateStyleSheet(id, cssText) {
-        let style = document.getElementById(id);
+    function updateStyleSheet(container, id, cssText) {
+        let style = container.querySelector(`#${id}`);
         if (!style) {
             style = document.createElement('style');
             style.id = id;
-            document.head.appendChild(style);
+            container.appendChild(style);
         }
         style.textContent = cssText;
     }
@@ -201,16 +202,16 @@ div#dialog button#confirm-button {
     };
     const Aizex = {
         name: 'Aizex',
-        baseUrl: ['aizex.cn', 'aizex.net'],
+        baseUrl: ['aizex.cn', 'aizex.net', 'aizex.me'],
         matchUrl: (url) => {
             const urlObj = new URL(url);
             const host = urlObj.hostname;
             const path = urlObj.pathname;
-            const isAizex = (host.endsWith('aizex.cn') || host.endsWith('aizex.net')) && host !== 'aizex.cn' && host !== 'aizex.net';
+            const isAizex = Aizex.baseUrl.some(base => host.endsWith(base) && host !== base);
             return isAizex && path.startsWith('/');
         },
         selector: {
-            officialTextarea: 'textarea#prompt-textarea',
+            officialTextarea: 'div#prompt-textarea',
             submitButton: null,
             chatSessionTitle: '#chat-title',
         },
@@ -226,10 +227,24 @@ div#dialog button#confirm-button {
             return textarea;
         },
         getSubmitButton: () => {
-            let textarea = document.querySelector(Aizex.selector.officialTextarea);
-            let grandpa = textarea.parentElement.parentElement;
-            let buttons = grandpa.querySelectorAll('button');
-            return buttons[buttons.length - 1];
+            let button = document.querySelector('button[data-testid="send-button"]');
+            return button;
+        },
+        getText: () => {
+            const officialTextarea = document.querySelector(Aizex.selector.officialTextarea);
+            let paras = officialTextarea.querySelectorAll('p');
+            let text = Array.from(paras).map(para => para.textContent).join('\n');
+            return text;
+        },
+        setText: (text) => {
+            const officialTextarea = document.querySelector(Aizex.selector.officialTextarea);
+            let lines = text.trim().split('\n');
+            removeAllChildren(officialTextarea);
+            lines.forEach(line => {
+                let p = document.createElement('p');
+                p.textContent = line;
+                officialTextarea.appendChild(p);
+            });
         }
     };
     const ChatGLM = {
@@ -564,9 +579,9 @@ div#dialog button#confirm-button {
                 document.body.style.overflow = 'auto';
                 this.confirmCallback(textarea.value, true);
             });
-            setTimeout(() => {
-                document.body.appendChild(overlay);
-            }, 2000);
+        }
+        render(container) {
+            container.appendChild(this.overlay);
         }
         hide() {
             this.overlay.style.display = 'none';
@@ -660,17 +675,26 @@ div#dialog button#confirm-button {
             }
         }
     };
+    const install = (dialog) => {
+        dialog.render(document.body.parentElement);
+        dialog.bindConfirmCallback(confirmed);
+        updateStyleSheet(dialog.overlay, 'custom-dialog-style', StyleSheet(FontFamily, currentPlatform));
+        document.addEventListener('keydown', (event) => {
+            if (event.altKey && event.key === 's') {
+                event.preventDefault();
+                event.stopPropagation();
+                dialog.show();
+            }
+        }, true);
+        const button = document.createElement('button');
+        button.onclick = () => dialog.show();
+        button.innerText = '对话框';
+        button.style.position = 'fixed';
+        document.body.appendChild(button);
+    };
     toggle();
     const dialog = new TextInputDialog();
-    dialog.bindConfirmCallback(confirmed);
-    updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily, currentPlatform));
-    document.addEventListener('keydown', (event) => {
-        if (event.altKey && event.key === 's') {
-            event.preventDefault();
-            event.stopPropagation();
-            dialog.show();
-        }
-    }, true);
+    install(dialog);
 
 })();
 //# sourceMappingURL=bundle.user.js.map

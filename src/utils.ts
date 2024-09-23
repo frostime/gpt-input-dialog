@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2023-08-16 17:05:29
  * @FilePath     : /src/utils.ts
- * @LastEditTime : 2024-07-30 22:17:04
+ * @LastEditTime : 2024-09-23 20:23:26
  * @Description  : 
  */
 import * as platform from './platform';
@@ -36,12 +36,12 @@ export const splitTextareaLines = (textarea: HTMLTextAreaElement, position: numb
     return { befores, line, afters };
 }
 
-export function updateStyleSheet(id: string, cssText: string) {
-    let style = document.getElementById(id);
+export function updateStyleSheet(container: HTMLElement, id: string, cssText: string) {
+    let style = container.querySelector(`#${id}`);
     if (!style) {
         style = document.createElement('style');
         style.id = id;
-        document.head.appendChild(style);
+        container.appendChild(style);
     }
     style.textContent = cssText;
 }

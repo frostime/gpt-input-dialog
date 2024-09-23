@@ -8,7 +8,7 @@
         "typescript"
     ],
     "author": "frostime",
-    "description": "添加一个对话框在 Poe 页面上，方便长文本输入",
+    "description": "为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms",
     "license": "AGPL-3.0-only",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",

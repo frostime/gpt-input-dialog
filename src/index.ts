@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-08-31 20:06:07
+ * @LastEditTime : 2024-09-23 20:38:10
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -76,19 +76,30 @@ const toggle = () => {
         }
     }
 }
+
+const install = (dialog: TextInputDialog) => {
+    dialog.render(document.body.parentElement);
+    dialog.bindConfirmCallback(confirmed);
+    updateStyleSheet(dialog.overlay, 'custom-dialog-style', StyleSheet(FontFamily, platform.currentPlatform));
+
+    //监听按键
+    document.addEventListener('keydown', (event) => {
+        //Alt + S
+        if (event.altKey && event.key === 's') {
+            event.preventDefault();
+            event.stopPropagation();
+            dialog.show();
+        }
+    }, true);
+
+    const button = document.createElement('button');
+    button.onclick = () => dialog.show();
+    button.innerText = '对话框';
+    button.style.position = 'fixed';
+    document.body.appendChild(button);
+}
+
 toggle();
-
 const dialog = new TextInputDialog();
-dialog.bindConfirmCallback(confirmed);
-updateStyleSheet('custom-dialog-style', StyleSheet(FontFamily, platform.currentPlatform));
-
-//监听按键
-document.addEventListener('keydown', (event) => {
-    //Alt + S
-    if (event.altKey && event.key === 's') {
-        event.preventDefault();
-        event.stopPropagation();
-        dialog.show();
-    }
-}, true);
+install(dialog);
 

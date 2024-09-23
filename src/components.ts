@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-06-30 17:46:33
+ * @LastEditTime : 2024-09-23 19:59:25
  * @Description  : 
  */
 import { enableTabToIndent, unindentSelection } from './indent-textarea';
@@ -205,11 +205,10 @@ export class TextInputDialog {
             document.body.style.overflow = 'auto';
             this.confirmCallback(textarea.value, true);
         });
+    }
 
-        // Append overlay to the document body
-        setTimeout(() => {
-            document.body.appendChild(overlay);
-        }, 2000);
+    render(container: HTMLElement) {
+        container.appendChild(this.overlay);
     }
 
     hide() {
