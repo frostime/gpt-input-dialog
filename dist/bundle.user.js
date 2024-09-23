@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.10.0
+// @version     5.10.1
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -45,7 +45,7 @@
         style.textContent = cssText;
     }
     const queryOfficalTextarea = () => {
-        const q = currentPlatform.selector.officialTextarea;
+        const q = currentPlatform$1.selector.officialTextarea;
         const textarea = document.querySelector(q);
         return textarea;
     };
@@ -307,11 +307,11 @@ div#dialog button#confirm-button {
         }
     };
     const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini];
-    let currentPlatform;
+    let currentPlatform$1;
     const togglePlatform = (name) => {
         const platform = Platforms.find(p => p.name === name);
         if (platform) {
-            currentPlatform = platform;
+            currentPlatform$1 = platform;
         }
         else {
             console.error(`platform ${name} not found; togglePlatform failed.`);
@@ -514,7 +514,7 @@ div#dialog button#confirm-button {
         buildDialog() {
             const i18n = useI18n();
             const overlay = document.createElement('div');
-            overlay.id = 'overlay';
+            overlay.id = TextInputDialog.OVERLAY_ID;
             overlay.style.position = 'fixed';
             overlay.style.top = '0';
             overlay.style.left = '0';
@@ -532,7 +532,7 @@ div#dialog button#confirm-button {
             const textInput = document.createElement('div');
             textInput.id = 'dialog-text-input';
             textInput.dataset.replicatedValue = '';
-            const textarea = currentPlatform.createTextarea();
+            const textarea = currentPlatform$1.createTextarea();
             textInput.appendChild(textarea);
             this.textarea = textarea;
             textarea.style.whiteSpace = 'pre-wrap';
@@ -598,31 +598,32 @@ div#dialog button#confirm-button {
             this.textarea.focus();
         }
         updateDialog() {
-            if (currentPlatform.getText === undefined) {
+            if (currentPlatform$1.getText === undefined) {
                 const baseText = queryOfficalTextarea()?.value;
                 this.textarea.value = baseText || '';
             }
             else {
-                this.textarea.value = currentPlatform.getText();
+                this.textarea.value = currentPlatform$1.getText();
             }
-            const title = document.querySelector(currentPlatform.selector.chatSessionTitle);
+            const title = document.querySelector(currentPlatform$1.selector.chatSessionTitle);
             if (title) {
                 this.textarea.placeholder = `Talk to ${title.textContent}`;
             }
             this.textarea.focus();
         }
     }
+    TextInputDialog.OVERLAY_ID = 'overlay';
 
     const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei, Arial, sans-serif';
     function submit() {
         setTimeout(() => {
-            const cur = currentPlatform;
+            const cur = currentPlatform$1;
             let button;
             if (cur?.getSubmitButton) {
                 button = cur.getSubmitButton();
             }
             else {
-                const qButton = currentPlatform.selector.submitButton;
+                const qButton = currentPlatform$1.selector.submitButton;
                 button = document.querySelector(qButton);
             }
             if (button) {
@@ -635,8 +636,8 @@ div#dialog button#confirm-button {
             return;
         const textarea = queryOfficalTextarea();
         if (textarea) {
-            if (currentPlatform.setText) {
-                currentPlatform.setText(text);
+            if (currentPlatform$1.setText) {
+                currentPlatform$1.setText(text);
             }
             else {
                 textarea.value = text;
@@ -671,14 +672,16 @@ div#dialog button#confirm-button {
             let match = DefaultMatchPlatformMethod(url, p);
             if (match) {
                 togglePlatform(p.name);
-                return;
+                return p;
             }
         }
+        return null;
     };
-    const install = (dialog) => {
+    const install = () => {
+        const dialog = new TextInputDialog();
         dialog.render(document.body.parentElement);
         dialog.bindConfirmCallback(confirmed);
-        updateStyleSheet(dialog.overlay, 'custom-dialog-style', StyleSheet(FontFamily, currentPlatform));
+        updateStyleSheet(dialog.overlay, 'custom-dialog-style', StyleSheet(FontFamily, currentPlatform$1));
         document.addEventListener('keydown', (event) => {
             if (event.altKey && event.key === 's') {
                 event.preventDefault();
@@ -686,15 +689,21 @@ div#dialog button#confirm-button {
                 dialog.show();
             }
         }, true);
-        const button = document.createElement('button');
-        button.onclick = () => dialog.show();
-        button.innerText = '对话框';
-        button.style.position = 'fixed';
-        document.body.appendChild(button);
+        return dialog;
     };
-    toggle();
-    const dialog = new TextInputDialog();
-    install(dialog);
+    const currentPlatform = toggle();
+    if (currentPlatform.name === 'Aizex') {
+        setTimeout(install, 1000 * 3);
+        setTimeout(() => {
+            const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
+            if (!overlay) {
+                install();
+            }
+        }, 1000 * 10);
+    }
+    else {
+        install();
+    }
 
 })();
 //# sourceMappingURL=bundle.user.js.map

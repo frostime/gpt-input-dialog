@@ -92,6 +92,8 @@ const KeydownEventHandler = (event: KeyboardEvent, { textarea, cancelButton, fil
 
 export class TextInputDialog {
 
+    public static readonly OVERLAY_ID = 'overlay';
+
     overlay: HTMLDivElement;
     dialog: HTMLDivElement;
     textarea: HTMLTextAreaElement;
@@ -113,7 +115,7 @@ export class TextInputDialog {
         const i18n = useI18n();
 
         const overlay: HTMLDivElement = document.createElement('div');
-        overlay.id = 'overlay';
+        overlay.id = TextInputDialog.OVERLAY_ID;
         overlay.style.position = 'fixed';
         overlay.style.top = '0';
         overlay.style.left = '0';

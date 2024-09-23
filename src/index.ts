@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-09-23 20:38:10
+ * @LastEditTime : 2024-09-23 21:00:31
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -72,12 +72,14 @@ const toggle = () => {
         let match = DefaultMatchPlatformMethod(url, p)
         if (match) {
             platform.togglePlatform(p.name);
-            return;
+            return p;
         }
     }
+    return null;
 }
 
-const install = (dialog: TextInputDialog) => {
+const install = () => {
+    const dialog = new TextInputDialog();
     dialog.render(document.body.parentElement);
     dialog.bindConfirmCallback(confirmed);
     updateStyleSheet(dialog.overlay, 'custom-dialog-style', StyleSheet(FontFamily, platform.currentPlatform));
@@ -91,15 +93,20 @@ const install = (dialog: TextInputDialog) => {
             dialog.show();
         }
     }, true);
-
-    const button = document.createElement('button');
-    button.onclick = () => dialog.show();
-    button.innerText = '对话框';
-    button.style.position = 'fixed';
-    document.body.appendChild(button);
+    return dialog;
 }
 
-toggle();
-const dialog = new TextInputDialog();
-install(dialog);
-
+const currentPlatform = toggle();
+if (currentPlatform.name === 'Aizex') {
+    //不知道为什么 Aizex 平台非常不稳定，经常会初始化失败。。。
+    setTimeout(install, 1000 * 3);
+    setTimeout(() => {
+        //保险期间，在检查一遍
+        const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
+        if (!overlay) {
+            install();
+        }
+    }, 1000 * 10);
+} else {
+    install();
+}

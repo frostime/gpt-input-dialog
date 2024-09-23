@@ -2,7 +2,7 @@
     "name": "GPT Input Dialog",
     "namespace": "gitlab.com/frostime",
     "description": "为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms",
-    "version": "5.10.0",
+    "version": "5.10.1",
     "copyright": "(2024) frostime",
     "match": [
         "*://poe.com/chat/*",
