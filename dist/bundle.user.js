@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.10.1
+// @version     5.10.2
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -211,8 +211,8 @@ div#dialog button#confirm-button {
             return isAizex && path.startsWith('/');
         },
         selector: {
-            officialTextarea: 'div#prompt-textarea',
-            submitButton: null,
+            officialTextarea: 'textarea#prompt-textarea',
+            submitButton: 'button[data-testid="send-button"]',
             chatSessionTitle: '#chat-title',
         },
         css: {
@@ -225,26 +225,6 @@ div#dialog button#confirm-button {
             textarea.style.padding = '0px';
             textarea.placeholder = 'Talk to ...';
             return textarea;
-        },
-        getSubmitButton: () => {
-            let button = document.querySelector('button[data-testid="send-button"]');
-            return button;
-        },
-        getText: () => {
-            const officialTextarea = document.querySelector(Aizex.selector.officialTextarea);
-            let paras = officialTextarea.querySelectorAll('p');
-            let text = Array.from(paras).map(para => para.textContent).join('\n');
-            return text;
-        },
-        setText: (text) => {
-            const officialTextarea = document.querySelector(Aizex.selector.officialTextarea);
-            let lines = text.trim().split('\n');
-            removeAllChildren(officialTextarea);
-            lines.forEach(line => {
-                let p = document.createElement('p');
-                p.textContent = line;
-                officialTextarea.appendChild(p);
-            });
         }
     };
     const ChatGLM = {

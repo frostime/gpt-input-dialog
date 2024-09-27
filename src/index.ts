@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-09-23 21:00:31
+ * @LastEditTime : 2024-09-27 12:20:40
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -15,7 +15,6 @@ const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei,
 function submit() {
 
     setTimeout(() => {
-        // const qButton = 'div.ChatMessageInputContainer_inputContainer__s2AGa button.ChatMessageInputContainer_sendButton__dBjTt';
         const cur = platform.currentPlatform;
         let button: HTMLButtonElement;
         if (cur?.getSubmitButton) {

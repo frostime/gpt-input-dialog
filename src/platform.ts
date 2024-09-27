@@ -5,7 +5,7 @@ import { removeAllChildren } from "./utils";
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-09-23 20:44:12
+ * @LastEditTime : 2024-09-27 12:19:48
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -126,8 +126,6 @@ const Aizex: IPlatform = {
     name: 'Aizex',
     baseUrl: ['aizex.cn', 'aizex.net', 'aizex.me'],
     matchUrl: (url: string) => {
-        // 符合: https://*.aizex.cn/*
-        //使用 URL API
         const urlObj = new URL(url);
         const host = urlObj.hostname;
         const path = urlObj.pathname;
@@ -135,8 +133,8 @@ const Aizex: IPlatform = {
         return isAizex && path.startsWith('/');
     },
     selector: {
-        officialTextarea: 'div#prompt-textarea',
-        submitButton: null,
+        officialTextarea: 'textarea#prompt-textarea',
+        submitButton: 'button[data-testid="send-button"]',
         chatSessionTitle: '#chat-title', //不存在
     },
     css: {
@@ -149,26 +147,6 @@ const Aizex: IPlatform = {
         textarea.style.padding = '0px';
         textarea.placeholder = 'Talk to ...';
         return textarea;
-    },
-    getSubmitButton: () => {
-        let button = document.querySelector('button[data-testid="send-button"]') as HTMLButtonElement;
-        return button;
-    },
-    getText: () => {
-        const officialTextarea: HTMLDivElement = document.querySelector(Aizex.selector.officialTextarea);
-        let paras = officialTextarea.querySelectorAll('p');
-        let text = Array.from(paras).map(para => para.textContent).join('\n');
-        return text;
-    },
-    setText: (text: string) => {
-        const officialTextarea: HTMLDivElement = document.querySelector(Aizex.selector.officialTextarea);
-        let lines = text.trim().split('\n');
-        removeAllChildren(officialTextarea);
-        lines.forEach(line => {
-            let p = document.createElement('p');
-            p.textContent = line;
-            officialTextarea.appendChild(p);
-        });
     }
 }
 
@@ -242,12 +220,6 @@ export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Ge
 
 export let currentPlatform: IPlatform;
 export const togglePlatform = (name: string) => {
-    // for (let p of Platforms) {
-    //     if (p.name === name) {
-    //         currentPlatform = p;
-    //         break;
-    //     }
-    // }
     const platform = Platforms.find(p => p.name === name);
     if (platform) {
         currentPlatform = platform;
