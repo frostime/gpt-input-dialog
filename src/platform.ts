@@ -1,11 +1,29 @@
 import { removeAllChildren } from "./utils";
 
+
+const ContenteditableTextarea = {
+    getText: (ele: HTMLDivElement) => {
+        let paras = ele.querySelectorAll('p');
+        let text = Array.from(paras).map(para => para.textContent).join('\n');
+        return text;
+    },
+    setText: (ele: HTMLDivElement, text: string) => {
+        let lines = text.trim().split('\n');
+        removeAllChildren(ele);
+        lines.forEach(line => {
+            let p = document.createElement('p');
+            p.textContent = line;
+            ele.appendChild(p);
+        });
+    }
+}
+
 /*
  * Copyright (c) 2024 by frostime. All Rights Reserved.
  * @Author       : frostime
  * @Date         : 2024-04-21 17:17:02
  * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-09-27 12:19:48
+ * @LastEditTime : 2024-10-08 20:33:19
  * @Description  : 
  */
 const Poe: IPlatform = {
@@ -53,6 +71,7 @@ const Mistral: IPlatform = {
 
 
 //BUG setText 无法正常运行，暂时先不用了
+/*
 const Kimi: IPlatform = {
     name: 'Kimi',
     baseUrl: 'kimi.moonshot.cn',
@@ -92,14 +111,15 @@ const Kimi: IPlatform = {
         // officialTextarea.textContent = text.trim();
     }
 }
+*/
 
 
 const ChatGPT: IPlatform = {
     name: 'ChatGPT',
     baseUrl: 'chatgpt.com',
     selector: {
-        officialTextarea: 'textarea#prompt-textarea',
-        submitButton: null,
+        officialTextarea: 'div#prompt-textarea',
+        submitButton: 'button[data-testid="send-button"]',
         chatSessionTitle: '#chat-title', //不存在
     },
     css: {
@@ -114,10 +134,16 @@ const ChatGPT: IPlatform = {
         return textarea;
     },
     getSubmitButton: () => {
-        let textarea = document.querySelector(ChatGPT.selector.officialTextarea);
-        let grandpa = textarea.parentElement.parentElement;
-        let buttons = grandpa.querySelectorAll('button');
-        return buttons[buttons.length - 1];
+        let button = document.querySelector('button[data-testid="send-button"]') as HTMLButtonElement;
+        return button;
+    },
+    getText: () => {
+        const officialTextarea: HTMLDivElement = document.querySelector(ChatGPT.selector.officialTextarea);
+        return ContenteditableTextarea.getText(officialTextarea);
+    },
+    setText: (text: string) => {
+        const officialTextarea: HTMLDivElement = document.querySelector(ChatGPT.selector.officialTextarea);
+        ContenteditableTextarea.setText(officialTextarea, text);
     }
 }
 
@@ -133,7 +159,7 @@ const Aizex: IPlatform = {
         return isAizex && path.startsWith('/');
     },
     selector: {
-        officialTextarea: 'textarea#prompt-textarea',
+        officialTextarea: 'div#prompt-textarea',
         submitButton: 'button[data-testid="send-button"]',
         chatSessionTitle: '#chat-title', //不存在
     },
@@ -147,6 +173,18 @@ const Aizex: IPlatform = {
         textarea.style.padding = '0px';
         textarea.placeholder = 'Talk to ...';
         return textarea;
+    },
+    getSubmitButton: () => {
+        let button = document.querySelector('button[data-testid="send-button"]') as HTMLButtonElement;
+        return button;
+    },
+    getText: () => {
+        const officialTextarea: HTMLDivElement = document.querySelector(Aizex.selector.officialTextarea);
+        return ContenteditableTextarea.getText(officialTextarea);
+    },
+    setText: (text: string) => {
+        const officialTextarea: HTMLDivElement = document.querySelector(Aizex.selector.officialTextarea);
+        ContenteditableTextarea.setText(officialTextarea, text);
     }
 }
 
@@ -199,19 +237,11 @@ const Gemini: IPlatform = {
     },
     getText: () => {
         const officialTextarea: HTMLDivElement = document.querySelector(Gemini.selector.officialTextarea);
-        let paras = officialTextarea.querySelectorAll('p');
-        let text = Array.from(paras).map(para => para.textContent).join('\n');
-        return text;
+        return ContenteditableTextarea.getText(officialTextarea);
     },
     setText: (text: string) => {
         const officialTextarea: HTMLDivElement = document.querySelector(Gemini.selector.officialTextarea);
-        let lines = text.trim().split('\n');
-        removeAllChildren(officialTextarea);
-        lines.forEach(line => {
-            let p = document.createElement('p');
-            p.textContent = line;
-            officialTextarea.appendChild(p);
-        });
+        ContenteditableTextarea.setText(officialTextarea, text);
     }
 }
 

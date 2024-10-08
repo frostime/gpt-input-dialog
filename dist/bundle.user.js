@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.10.2
+// @version     5.11.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -134,6 +134,22 @@ div#dialog button#confirm-button {
     cursor: pointer;
 }`;
 
+    const ContenteditableTextarea = {
+        getText: (ele) => {
+            let paras = ele.querySelectorAll('p');
+            let text = Array.from(paras).map(para => para.textContent).join('\n');
+            return text;
+        },
+        setText: (ele, text) => {
+            let lines = text.trim().split('\n');
+            removeAllChildren(ele);
+            lines.forEach(line => {
+                let p = document.createElement('p');
+                p.textContent = line;
+                ele.appendChild(p);
+            });
+        }
+    };
     const Poe = {
         name: 'Poe',
         baseUrl: 'poe.com',
@@ -178,8 +194,8 @@ div#dialog button#confirm-button {
         name: 'ChatGPT',
         baseUrl: 'chatgpt.com',
         selector: {
-            officialTextarea: 'textarea#prompt-textarea',
-            submitButton: null,
+            officialTextarea: 'div#prompt-textarea',
+            submitButton: 'button[data-testid="send-button"]',
             chatSessionTitle: '#chat-title',
         },
         css: {
@@ -194,10 +210,16 @@ div#dialog button#confirm-button {
             return textarea;
         },
         getSubmitButton: () => {
-            let textarea = document.querySelector(ChatGPT.selector.officialTextarea);
-            let grandpa = textarea.parentElement.parentElement;
-            let buttons = grandpa.querySelectorAll('button');
-            return buttons[buttons.length - 1];
+            let button = document.querySelector('button[data-testid="send-button"]');
+            return button;
+        },
+        getText: () => {
+            const officialTextarea = document.querySelector(ChatGPT.selector.officialTextarea);
+            return ContenteditableTextarea.getText(officialTextarea);
+        },
+        setText: (text) => {
+            const officialTextarea = document.querySelector(ChatGPT.selector.officialTextarea);
+            ContenteditableTextarea.setText(officialTextarea, text);
         }
     };
     const Aizex = {
@@ -211,7 +233,7 @@ div#dialog button#confirm-button {
             return isAizex && path.startsWith('/');
         },
         selector: {
-            officialTextarea: 'textarea#prompt-textarea',
+            officialTextarea: 'div#prompt-textarea',
             submitButton: 'button[data-testid="send-button"]',
             chatSessionTitle: '#chat-title',
         },
@@ -225,6 +247,18 @@ div#dialog button#confirm-button {
             textarea.style.padding = '0px';
             textarea.placeholder = 'Talk to ...';
             return textarea;
+        },
+        getSubmitButton: () => {
+            let button = document.querySelector('button[data-testid="send-button"]');
+            return button;
+        },
+        getText: () => {
+            const officialTextarea = document.querySelector(Aizex.selector.officialTextarea);
+            return ContenteditableTextarea.getText(officialTextarea);
+        },
+        setText: (text) => {
+            const officialTextarea = document.querySelector(Aizex.selector.officialTextarea);
+            ContenteditableTextarea.setText(officialTextarea, text);
         }
     };
     const ChatGLM = {
@@ -271,19 +305,11 @@ div#dialog button#confirm-button {
         },
         getText: () => {
             const officialTextarea = document.querySelector(Gemini.selector.officialTextarea);
-            let paras = officialTextarea.querySelectorAll('p');
-            let text = Array.from(paras).map(para => para.textContent).join('\n');
-            return text;
+            return ContenteditableTextarea.getText(officialTextarea);
         },
         setText: (text) => {
             const officialTextarea = document.querySelector(Gemini.selector.officialTextarea);
-            let lines = text.trim().split('\n');
-            removeAllChildren(officialTextarea);
-            lines.forEach(line => {
-                let p = document.createElement('p');
-                p.textContent = line;
-                officialTextarea.appendChild(p);
-            });
+            ContenteditableTextarea.setText(officialTextarea, text);
         }
     };
     const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini];
@@ -672,7 +698,7 @@ div#dialog button#confirm-button {
         return dialog;
     };
     const currentPlatform = toggle();
-    if (currentPlatform.name === 'Aizex') {
+    if (['Aizex', 'ChatGPT'].includes(currentPlatform.name)) {
         setTimeout(install, 1000 * 3);
         setTimeout(() => {
             const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
