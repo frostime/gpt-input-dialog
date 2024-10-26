@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-10-08 20:43:06
+ * @LastEditTime : 2024-10-26 22:12:23
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -79,7 +79,7 @@ const toggle = () => {
 
 const install = () => {
     const dialog = new TextInputDialog();
-    dialog.render(document.body.parentElement);
+    dialog.render(document.body);
     dialog.bindConfirmCallback(confirmed);
     updateStyleSheet(dialog.overlay, 'custom-dialog-style', StyleSheet(FontFamily, platform.currentPlatform));
 
@@ -96,16 +96,21 @@ const install = () => {
 }
 
 const currentPlatform = toggle();
-if (['Aizex', 'ChatGPT'].includes(currentPlatform.name)) {
-    //不知道为什么 Aizex 平台非常不稳定，经常会初始化失败。。。
-    setTimeout(install, 1000 * 3);
-    setTimeout(() => {
-        //保险期间，在检查一遍
-        const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
-        if (!overlay) {
-            install();
-        }
-    }, 1000 * 10);
+
+if (currentPlatform === null) {
+    console.warn(`无法匹配当前网页: ${url}`);
 } else {
-    install();
+    if (['Aizex', 'ChatGPT', 'Claude'].includes(currentPlatform.name)) {
+        //不知道为什么 Aizex 平台非常不稳定，经常会初始化失败。。。
+        setTimeout(install, 1000 * 3);
+        setTimeout(() => {
+            //保险期间，在检查一遍
+            const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
+            if (!overlay) {
+                install();
+            }
+        }, 1000 * 10);
+    } else {
+        install();
+    }
 }

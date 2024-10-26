@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.11.0
+// @version     5.12.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -14,6 +14,7 @@
 // @match       *://*.aizex.me/*
 // @match       *://chatglm.cn/*
 // @match       *://gemini.google.com/app*
+// @match       https://claude.ai/*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at      document-end
 // @author      frostime
@@ -230,6 +231,9 @@ div#dialog button#confirm-button {
             const host = urlObj.hostname;
             const path = urlObj.pathname;
             const isAizex = Aizex.baseUrl.some(base => host.endsWith(base) && host !== base);
+            if (isAizex && host.startsWith('arc-c')) {
+                return false;
+            }
             return isAizex && path.startsWith('/');
         },
         selector: {
@@ -258,6 +262,44 @@ div#dialog button#confirm-button {
         },
         setText: (text) => {
             const officialTextarea = document.querySelector(Aizex.selector.officialTextarea);
+            ContenteditableTextarea.setText(officialTextarea, text);
+        }
+    };
+    const Claude = {
+        name: 'Claude',
+        baseUrl: ['claude.ai'],
+        matchUrl: (url) => {
+            const urlObj = new URL(url);
+            const host = urlObj.hostname;
+            const isClaude = Claude.baseUrl.some(base => host.endsWith(base));
+            if (!isClaude && host.match('arc-c.aizex')) {
+                return true;
+            }
+            return isClaude;
+        },
+        selector: {
+            officialTextarea: 'fieldset div.ProseMirror[contenteditable="true"]',
+            submitButton: 'fieldset button[aria-label="Send Message"]',
+            chatSessionTitle: '#chat-title',
+        },
+        css: {
+            backgroundColor: 'hsl(var(--bg-000)/var(--tw-bg-opacity))',
+            primaryColor: 'hsl(var(--accent-main-100)/var(--tw-bg-opacity))',
+        },
+        createTextarea: () => {
+            const textarea = document.createElement('textarea');
+            textarea.style.backgroundColor = Claude.css.backgroundColor;
+            textarea.style.padding = '0px';
+            textarea.style.boxShadow = 'unset';
+            textarea.placeholder = 'Talk to ...';
+            return textarea;
+        },
+        getText: () => {
+            const officialTextarea = document.querySelector(Claude.selector.officialTextarea);
+            return ContenteditableTextarea.getText(officialTextarea);
+        },
+        setText: (text) => {
+            const officialTextarea = document.querySelector(Claude.selector.officialTextarea);
             ContenteditableTextarea.setText(officialTextarea, text);
         }
     };
@@ -312,7 +354,7 @@ div#dialog button#confirm-button {
             ContenteditableTextarea.setText(officialTextarea, text);
         }
     };
-    const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini];
+    const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude];
     let currentPlatform$1;
     const togglePlatform = (name) => {
         const platform = Platforms.find(p => p.name === name);
@@ -587,6 +629,7 @@ div#dialog button#confirm-button {
             });
         }
         render(container) {
+            console.log(`Install GPT-Dialog within: ${container.tagName}`);
             container.appendChild(this.overlay);
         }
         hide() {
@@ -685,7 +728,7 @@ div#dialog button#confirm-button {
     };
     const install = () => {
         const dialog = new TextInputDialog();
-        dialog.render(document.body.parentElement);
+        dialog.render(document.body);
         dialog.bindConfirmCallback(confirmed);
         updateStyleSheet(dialog.overlay, 'custom-dialog-style', StyleSheet(FontFamily, currentPlatform$1));
         document.addEventListener('keydown', (event) => {
@@ -698,17 +741,22 @@ div#dialog button#confirm-button {
         return dialog;
     };
     const currentPlatform = toggle();
-    if (['Aizex', 'ChatGPT'].includes(currentPlatform.name)) {
-        setTimeout(install, 1000 * 3);
-        setTimeout(() => {
-            const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
-            if (!overlay) {
-                install();
-            }
-        }, 1000 * 10);
+    if (currentPlatform === null) {
+        console.warn(`无法匹配当前网页: ${url}`);
     }
     else {
-        install();
+        if (['Aizex', 'ChatGPT', 'Claude'].includes(currentPlatform.name)) {
+            setTimeout(install, 1000 * 3);
+            setTimeout(() => {
+                const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
+                if (!overlay) {
+                    install();
+                }
+            }, 1000 * 10);
+        }
+        else {
+            install();
+        }
     }
 
 })();

@@ -156,6 +156,9 @@ const Aizex: IPlatform = {
         const host = urlObj.hostname;
         const path = urlObj.pathname;
         const isAizex = (Aizex.baseUrl as string[]).some(base => host.endsWith(base) && host !== base);
+        if (isAizex && host.startsWith('arc-c')) {
+            return false;
+        }
         return isAizex && path.startsWith('/');
     },
     selector: {
@@ -184,6 +187,51 @@ const Aizex: IPlatform = {
     },
     setText: (text: string) => {
         const officialTextarea: HTMLDivElement = document.querySelector(Aizex.selector.officialTextarea);
+        ContenteditableTextarea.setText(officialTextarea, text);
+    }
+}
+
+
+const Claude: IPlatform = {
+    name: 'Claude',
+    baseUrl: ['claude.ai'],
+    matchUrl: (url: string) => {
+        const urlObj = new URL(url);
+        const host = urlObj.hostname;
+        // const path = urlObj.pathname;
+        const isClaude = (Claude.baseUrl as string[]).some(base => host.endsWith(base));
+        if (!isClaude && host.match('arc-c.aizex')) {
+            return true;
+        }
+        return isClaude;
+    },
+    selector: {
+        officialTextarea: 'fieldset div.ProseMirror[contenteditable="true"]',
+        submitButton: 'fieldset button[aria-label="Send Message"]',
+        chatSessionTitle: '#chat-title', //不存在
+    },
+    css: {
+        backgroundColor: 'hsl(var(--bg-000)/var(--tw-bg-opacity))',
+        primaryColor: 'hsl(var(--accent-main-100)/var(--tw-bg-opacity))',
+    },
+    createTextarea: () => {
+        const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        textarea.style.backgroundColor = Claude.css.backgroundColor;
+        textarea.style.padding = '0px';
+        textarea.style.boxShadow = 'unset';
+        textarea.placeholder = 'Talk to ...';
+        return textarea;
+    },
+    // getSubmitButton: () => {
+    //     let button = document.querySelector('button[data-testid="send-button"]') as HTMLButtonElement;
+    //     return button;
+    // },
+    getText: () => {
+        const officialTextarea: HTMLDivElement = document.querySelector(Claude.selector.officialTextarea);
+        return ContenteditableTextarea.getText(officialTextarea);
+    },
+    setText: (text: string) => {
+        const officialTextarea: HTMLDivElement = document.querySelector(Claude.selector.officialTextarea);
         ContenteditableTextarea.setText(officialTextarea, text);
     }
 }
@@ -246,7 +294,7 @@ const Gemini: IPlatform = {
 }
 
 
-export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini];
+export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude];
 
 export let currentPlatform: IPlatform;
 export const togglePlatform = (name: string) => {

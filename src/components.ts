@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 16:08:53
  * @FilePath     : /src/components.ts
- * @LastEditTime : 2024-09-23 19:59:25
+ * @LastEditTime : 2024-10-26 21:56:01
  * @Description  : 
  */
 import { enableTabToIndent, unindentSelection } from './indent-textarea';
@@ -210,6 +210,7 @@ export class TextInputDialog {
     }
 
     render(container: HTMLElement) {
+        console.log(`Install GPT-Dialog within: ${container.tagName}`)
         container.appendChild(this.overlay);
     }
 
