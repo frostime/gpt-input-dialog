@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.12.0
+// @version     5.13.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -630,6 +630,10 @@ div#dialog button#confirm-button {
         }
         render(container) {
             console.log(`Install GPT-Dialog within: ${container.tagName}`);
+            if (container.querySelector(`#${TextInputDialog.OVERLAY_ID}`)) {
+                console.warn(`Overlay already exists, skip render`);
+                return;
+            }
             container.appendChild(this.overlay);
         }
         hide() {
@@ -745,18 +749,21 @@ div#dialog button#confirm-button {
         console.warn(`无法匹配当前网页: ${url}`);
     }
     else {
-        if (['Aizex', 'ChatGPT', 'Claude'].includes(currentPlatform.name)) {
-            setTimeout(install, 1000 * 3);
-            setTimeout(() => {
-                const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
-                if (!overlay) {
-                    install();
-                }
-            }, 1000 * 10);
-        }
-        else {
-            install();
-        }
+        install();
+        const checkInterval = 2000;
+        const maxTime = 10000;
+        let elapsedTime = 0;
+        const intervalId = setInterval(() => {
+            elapsedTime += checkInterval;
+            const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
+            if (!overlay) {
+                console.info('Overlay not found, install again');
+                install();
+            }
+            if (elapsedTime >= maxTime) {
+                clearInterval(intervalId);
+            }
+        }, checkInterval);
     }
 
 })();

@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2024-04-06 15:54:15
  * @FilePath     : /src/index.ts
- * @LastEditTime : 2024-10-26 22:12:23
+ * @LastEditTime : 2024-11-10 13:50:06
  * @Description  : Poe long input dialog
  */
 import * as platform from './platform';
@@ -100,17 +100,24 @@ const currentPlatform = toggle();
 if (currentPlatform === null) {
     console.warn(`无法匹配当前网页: ${url}`);
 } else {
-    if (['Aizex', 'ChatGPT', 'Claude'].includes(currentPlatform.name)) {
-        //不知道为什么 Aizex 平台非常不稳定，经常会初始化失败。。。
-        setTimeout(install, 1000 * 3);
-        setTimeout(() => {
-            //保险期间，在检查一遍
-            const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
-            if (!overlay) {
-                install();
-            }
-        }, 1000 * 10);
-    } else {
-        install();
-    }
+    install();
+
+    // 设置检查间隔
+    const checkInterval = 2000; // 2秒
+    const maxTime = 10000;      // 10秒
+    let elapsedTime = 0;
+
+    const intervalId = setInterval(() => {
+        elapsedTime += checkInterval;
+        const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
+
+        if (!overlay) {
+            console.info('Overlay not found, install again');
+            install();
+        }
+
+        if (elapsedTime >= maxTime) {
+            clearInterval(intervalId);
+        }
+    }, checkInterval);
 }
