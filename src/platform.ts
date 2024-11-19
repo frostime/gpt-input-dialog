@@ -53,8 +53,8 @@ const Mistral: IPlatform = {
     name: 'Mistral',
     baseUrl: 'chat.mistral.ai/chat',
     selector: {
-        officialTextarea: 'div[role="presentation"] textarea',
-        submitButton: 'div[role="presentation"] div.justify-center button[type="submit"]',
+        officialTextarea: 'textarea',
+        submitButton: 'button[type="submit"]',
         chatSessionTitle: 'div.flex.w-full>p.block.truncate',
     },
     css: {

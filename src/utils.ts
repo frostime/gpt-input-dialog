@@ -3,7 +3,7 @@
  * @Author       : frostime
  * @Date         : 2023-08-16 17:05:29
  * @FilePath     : /src/utils.ts
- * @LastEditTime : 2024-09-23 20:23:26
+ * @LastEditTime : 2024-11-19 21:37:58
  * @Description  : 
  */
 import * as platform from './platform';
@@ -85,14 +85,17 @@ div#dialog {
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     display: flex;
-    width: 50%;
     flex-direction: column;
-    max-width: 900px;
-    min-width: 400px;
+    width: 50%;
+    max-width: 90%;
+    min-width: 45%;
     height: 500px;
     max-height: 80%;
     position: absolute;
     bottom: 50px;
+}
+div#dialog svg {
+    fill: ${currentPlatform.css.primaryColor};
 }
 div#dialog #dialog-text-input {
     border: 1px solid ${currentPlatform.css.primaryColor};
