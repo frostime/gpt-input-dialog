@@ -29,7 +29,7 @@ interface IPlatform {
     selector: {
         officialTextarea: string;
         submitButton: string;
-        chatSessionTitle: string;
+        chatSessionTitle?: string;
     };
     css: {
         backgroundColor: string;

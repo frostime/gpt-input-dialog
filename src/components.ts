@@ -297,9 +297,11 @@ export class TextInputDialog {
             this.textarea.value = platform.currentPlatform.getText();
         }
 
-        const title = document.querySelector(platform.currentPlatform.selector.chatSessionTitle);
-        if (title) {
-            this.textarea.placeholder = `Talk to ${title.textContent}`;
+        if (platform.currentPlatform.selector.chatSessionTitle) {
+            const title = document.querySelector(platform.currentPlatform.selector.chatSessionTitle);
+            if (title) {
+                this.textarea.placeholder = `Talk to ${title.textContent}`;
+            }
         }
         this.textarea.focus();
     }

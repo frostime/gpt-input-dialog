@@ -294,7 +294,31 @@ const Gemini: IPlatform = {
 }
 
 
-export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude];
+const Deepseek: IPlatform = {
+    name: 'Deepseek',
+    baseUrl: 'chat.deepseek.com',
+    selector: {
+        officialTextarea: 'textarea#chat-input',
+        submitButton: 'div[role="button"]',
+        chatSessionTitle: '',
+    },
+    css: {
+        backgroundColor: 'rgb(var(--ds-rgb-header))',
+        primaryColor: '#4d6bfe',
+    },
+    createTextarea: () => {
+        const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        Object.assign(textarea.style, {
+            'background-color': 'var(--ds-toast-custom-color)',
+            color: 'rgb(var(--ds-rgb-label-1))'
+        })
+        textarea.placeholder = 'Talk to ...';
+        return textarea;
+    }
+}
+
+
+export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude, Deepseek];
 
 export let currentPlatform: IPlatform;
 export const togglePlatform = (name: string) => {

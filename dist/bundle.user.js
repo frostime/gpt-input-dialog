@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.14.0
+// @version     5.15.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -15,6 +15,7 @@
 // @match       *://chatglm.cn/*
 // @match       *://gemini.google.com/app*
 // @match       https://claude.ai/*
+// @match       https://chat.deepseek.com/*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at      document-end
 // @author      frostime
@@ -357,7 +358,29 @@ div#dialog button#confirm-button {
             ContenteditableTextarea.setText(officialTextarea, text);
         }
     };
-    const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude];
+    const Deepseek = {
+        name: 'Deepseek',
+        baseUrl: 'chat.deepseek.com',
+        selector: {
+            officialTextarea: 'textarea#chat-input',
+            submitButton: 'div[role="button"]',
+            chatSessionTitle: '',
+        },
+        css: {
+            backgroundColor: 'rgb(var(--ds-rgb-header))',
+            primaryColor: '#4d6bfe',
+        },
+        createTextarea: () => {
+            const textarea = document.createElement('textarea');
+            Object.assign(textarea.style, {
+                'background-color': 'var(--ds-toast-custom-color)',
+                color: 'rgb(var(--ds-rgb-label-1))'
+            });
+            textarea.placeholder = 'Talk to ...';
+            return textarea;
+        }
+    };
+    const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude, Deepseek];
     let currentPlatform$1;
     const togglePlatform = (name) => {
         const platform = Platforms.find(p => p.name === name);
@@ -703,9 +726,11 @@ div#dialog button#confirm-button {
             else {
                 this.textarea.value = currentPlatform$1.getText();
             }
-            const title = document.querySelector(currentPlatform$1.selector.chatSessionTitle);
-            if (title) {
-                this.textarea.placeholder = `Talk to ${title.textContent}`;
+            if (currentPlatform$1.selector.chatSessionTitle) {
+                const title = document.querySelector(currentPlatform$1.selector.chatSessionTitle);
+                if (title) {
+                    this.textarea.placeholder = `Talk to ${title.textContent}`;
+                }
             }
             this.textarea.focus();
         }
