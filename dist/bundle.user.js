@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.15.0
+// @version     5.15.1
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -235,7 +235,8 @@ div#dialog button#confirm-button {
             const host = urlObj.hostname;
             const path = urlObj.pathname;
             const isAizex = Aizex.baseUrl.some(base => host.endsWith(base) && host !== base);
-            if (isAizex && host.startsWith('arc-c')) {
+            const prefix = host.split('aizex')[0];
+            if (isAizex && prefix.endsWith('-c.')) {
                 return false;
             }
             return isAizex && path.startsWith('/');
@@ -276,7 +277,8 @@ div#dialog button#confirm-button {
             const urlObj = new URL(url);
             const host = urlObj.hostname;
             const isClaude = Claude.baseUrl.some(base => host.endsWith(base));
-            if (!isClaude && host.match('arc-c.aizex')) {
+            const prefix = host.split('aizex')[0];
+            if (!isClaude && prefix.endsWith('-c.')) {
                 return true;
             }
             return isClaude;
@@ -363,7 +365,7 @@ div#dialog button#confirm-button {
         baseUrl: 'chat.deepseek.com',
         selector: {
             officialTextarea: 'textarea#chat-input',
-            submitButton: 'div[role="button"]',
+            submitButton: 'div[role="button"]:last-child',
             chatSessionTitle: '',
         },
         css: {
@@ -383,9 +385,11 @@ div#dialog button#confirm-button {
     const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude, Deepseek];
     let currentPlatform$1;
     const togglePlatform = (name) => {
+        console.log(`Try to toggle platform: ${name}`);
         const platform = Platforms.find(p => p.name === name);
         if (platform) {
             currentPlatform$1 = platform;
+            console.log(`platform ${name} toggled.`);
         }
         else {
             console.error(`platform ${name} not found; togglePlatform failed.`);

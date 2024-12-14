@@ -156,7 +156,8 @@ const Aizex: IPlatform = {
         const host = urlObj.hostname;
         const path = urlObj.pathname;
         const isAizex = (Aizex.baseUrl as string[]).some(base => host.endsWith(base) && host !== base);
-        if (isAizex && host.startsWith('arc-c')) {
+        const prefix = host.split('aizex')[0];
+        if (isAizex && prefix.endsWith('-c.')) {
             return false;
         }
         return isAizex && path.startsWith('/');
@@ -200,7 +201,8 @@ const Claude: IPlatform = {
         const host = urlObj.hostname;
         // const path = urlObj.pathname;
         const isClaude = (Claude.baseUrl as string[]).some(base => host.endsWith(base));
-        if (!isClaude && host.match('arc-c.aizex')) {
+        const prefix = host.split('aizex')[0];
+        if (!isClaude && prefix.endsWith('-c.')) {
             return true;
         }
         return isClaude;
@@ -299,7 +301,7 @@ const Deepseek: IPlatform = {
     baseUrl: 'chat.deepseek.com',
     selector: {
         officialTextarea: 'textarea#chat-input',
-        submitButton: 'div[role="button"]',
+        submitButton: 'div[role="button"]:last-child',
         chatSessionTitle: '',
     },
     css: {
@@ -322,9 +324,11 @@ export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Ge
 
 export let currentPlatform: IPlatform;
 export const togglePlatform = (name: string) => {
+    console.log(`Try to toggle platform: ${name}`);
     const platform = Platforms.find(p => p.name === name);
     if (platform) {
         currentPlatform = platform;
+        console.log(`platform ${name} toggled.`);
     } else {
         console.error(`platform ${name} not found; togglePlatform failed.`);
     }
