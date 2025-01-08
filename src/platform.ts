@@ -329,11 +329,15 @@ const GoogleAIStudio: IPlatform = {
         chatSessionTitle: '',
     },
     css: {
-        backgroundColor: 'var(--color-surface-container-lowest)',
+        backgroundColor: 'var(--color-neutral-8)',
         primaryColor: '#2e95d3',
     },
     createTextarea: () => {
         const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        Object.assign(textarea.style, {
+            'background-color': 'var(--color-surface-container-lowest)',
+            color: 'var(--color-neutral-90)'
+        });
         textarea.placeholder = 'Talk to ...';
         return textarea;
     }
