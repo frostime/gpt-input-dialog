@@ -320,7 +320,35 @@ const Deepseek: IPlatform = {
 }
 
 
-export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude, Deepseek];
+const GoogleAIStudio: IPlatform = {
+    name: 'GoogleAIStudio',
+    baseUrl: 'aistudio.google.com',
+    selector: {
+        officialTextarea: 'footer textarea',
+        submitButton: 'footer button[type="submit"]',
+        chatSessionTitle: '',
+    },
+    css: {
+        backgroundColor: 'var(--color-surface-container-lowest)',
+        primaryColor: '#2e95d3',
+    },
+    createTextarea: () => {
+        const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        textarea.placeholder = 'Talk to ...';
+        return textarea;
+    },
+    getText: () => {
+        const officialTextarea: HTMLDivElement = document.querySelector(GoogleAIStudio.selector.officialTextarea);
+        return ContenteditableTextarea.getText(officialTextarea);
+    },
+    setText: (text: string) => {
+        const officialTextarea: HTMLDivElement = document.querySelector(GoogleAIStudio.selector.officialTextarea);
+        ContenteditableTextarea.setText(officialTextarea, text);
+    }
+}
+
+
+export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude, Deepseek, GoogleAIStudio];
 
 export let currentPlatform: IPlatform;
 export const togglePlatform = (name: string) => {
