@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.16.0
+// @version     5.16.1
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -399,14 +399,6 @@ div#dialog button#confirm-button {
             const textarea = document.createElement('textarea');
             textarea.placeholder = 'Talk to ...';
             return textarea;
-        },
-        getText: () => {
-            const officialTextarea = document.querySelector(GoogleAIStudio.selector.officialTextarea);
-            return ContenteditableTextarea.getText(officialTextarea);
-        },
-        setText: (text) => {
-            const officialTextarea = document.querySelector(GoogleAIStudio.selector.officialTextarea);
-            ContenteditableTextarea.setText(officialTextarea, text);
         }
     };
     const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude, Deepseek, GoogleAIStudio];
