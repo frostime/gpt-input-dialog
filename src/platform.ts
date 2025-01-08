@@ -336,14 +336,6 @@ const GoogleAIStudio: IPlatform = {
         const textarea: HTMLTextAreaElement = document.createElement('textarea');
         textarea.placeholder = 'Talk to ...';
         return textarea;
-    },
-    getText: () => {
-        const officialTextarea: HTMLDivElement = document.querySelector(GoogleAIStudio.selector.officialTextarea);
-        return ContenteditableTextarea.getText(officialTextarea);
-    },
-    setText: (text: string) => {
-        const officialTextarea: HTMLDivElement = document.querySelector(GoogleAIStudio.selector.officialTextarea);
-        ContenteditableTextarea.setText(officialTextarea, text);
     }
 }
 
