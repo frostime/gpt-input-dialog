@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.16.2
+// @version     5.17.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -12,8 +12,11 @@
 // @match       *://*.aizex.cn/*
 // @match       *://*.aizex.net/*
 // @match       *://*.aizex.me/*
+// @match       *://*.memofun.net/*
 // @match       *://chatglm.cn/*
 // @match       *://gemini.google.com/app*
+// @match       *://grok.com
+// @match       *://grok.com/chat/*
 // @match       https://claude.ai/*
 // @match       https://chat.deepseek.com/*
 // @match       https://aistudio.google.com/*
@@ -230,14 +233,14 @@ div#dialog button#confirm-button {
     };
     const Aizex = {
         name: 'Aizex',
-        baseUrl: ['aizex.cn', 'aizex.net', 'aizex.me'],
+        baseUrl: ['aizex.cn', 'aizex.net', 'aizex.me', 'memofun.net'],
         matchUrl: (url) => {
             const urlObj = new URL(url);
             const host = urlObj.hostname;
             const path = urlObj.pathname;
             const isAizex = Aizex.baseUrl.some(base => host.endsWith(base) && host !== base);
-            const prefix = host.split('aizex')[0];
-            if (isAizex && prefix.endsWith('-c.')) {
+            const prefix = host.split('.')[0];
+            if (isAizex && prefix.endsWith('-c')) {
                 return false;
             }
             return isAizex && path.startsWith('/');
@@ -278,8 +281,15 @@ div#dialog button#confirm-button {
             const urlObj = new URL(url);
             const host = urlObj.hostname;
             const isClaude = Claude.baseUrl.some(base => host.endsWith(base));
-            const prefix = host.split('aizex')[0];
-            if (!isClaude && prefix.endsWith('-c.')) {
+            const isAizexClaude = (() => {
+                const aizexBaseUrls = Aizex.baseUrl;
+                const isAizex = aizexBaseUrls.some(base => host.endsWith(base));
+                if (!isAizex)
+                    return false;
+                const firstPart = host.split('.aizex')[0];
+                return firstPart.endsWith('-c');
+            })();
+            if (!isClaude && isAizexClaude) {
                 return true;
             }
             return isClaude;
@@ -336,7 +346,7 @@ div#dialog button#confirm-button {
         baseUrl: 'gemini.google.com',
         selector: {
             officialTextarea: 'rich-textarea > div.ql-editor.textarea',
-            submitButton: '.action-wrapper button.send-button',
+            submitButton: '.input-buttons-wrapper-bottom button.send-button',
             chatSessionTitle: '',
         },
         css: {
@@ -366,7 +376,7 @@ div#dialog button#confirm-button {
         baseUrl: 'chat.deepseek.com',
         selector: {
             officialTextarea: 'textarea#chat-input',
-            submitButton: 'div[role="button"]:last-child',
+            submitButton: 'div[role="button"]._7436101',
             chatSessionTitle: '',
         },
         css: {
@@ -405,7 +415,33 @@ div#dialog button#confirm-button {
             return textarea;
         }
     };
-    const Platforms = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude, Deepseek, GoogleAIStudio];
+    const Grok = {
+        name: 'Grok',
+        baseUrl: 'grok.com',
+        selector: {
+            officialTextarea: 'textarea.w-full',
+            submitButton: 'button[type="submit"]',
+            chatSessionTitle: '',
+        },
+        css: {
+            backgroundColor: 'var(--background)',
+            primaryColor: '#1d9bf0',
+        },
+        createTextarea: () => {
+            const textarea = document.createElement('textarea');
+            Object.assign(textarea.style, {
+                borderRadius: '8px',
+                padding: '12px'
+            });
+            textarea.placeholder = 'Talk to Grok...';
+            return textarea;
+        }
+    };
+    const Platforms = [
+        Poe, Mistral, ChatGPT,
+        Aizex, ChatGLM, Gemini,
+        Claude, Deepseek, GoogleAIStudio, Grok
+    ];
     let currentPlatform$1;
     const togglePlatform = (name) => {
         console.log(`Try to toggle platform: ${name}`);

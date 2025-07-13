@@ -18,14 +18,7 @@ const ContenteditableTextarea = {
     }
 }
 
-/*
- * Copyright (c) 2024 by frostime. All Rights Reserved.
- * @Author       : frostime
- * @Date         : 2024-04-21 17:17:02
- * @FilePath     : /src/platform.ts
- * @LastEditTime : 2024-10-08 20:33:19
- * @Description  : 
- */
+
 const Poe: IPlatform = {
     name: 'Poe',
     baseUrl: 'poe.com',
@@ -69,51 +62,6 @@ const Mistral: IPlatform = {
     }
 }
 
-
-//BUG setText 无法正常运行，暂时先不用了
-/*
-const Kimi: IPlatform = {
-    name: 'Kimi',
-    baseUrl: 'kimi.moonshot.cn',
-    selector: {
-        officialTextarea: 'div.editor___KShcc>div[role="textbox"]',
-        submitButton: 'button#send-button',
-        chatSessionTitle: 'div.chatHeader___mPWFf>span.title___Jbjbz',
-    },
-    css: {
-        backgroundColor: 'var(--background-default)',
-        primaryColor: 'var(--msh-button-primary-bg)',
-    },
-    createTextarea: () => {
-        const textarea: HTMLTextAreaElement = document.createElement('textarea');
-        // textarea.className = 'GrowingTextArea_textArea__ZWQbP';
-        // textarea.rows = 5;
-        textarea.placeholder = 'Talk to ...';
-        return textarea;
-    },
-    getText: () => {
-        const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
-        const spans = officialTextarea.querySelectorAll('span[data-slate-node="text"]>span[data-slate-leaf="true"]>span[data-slate-string="true"]');
-        return Array.from(spans).map((span: HTMLElement) => span.textContent).join('\n');
-    },
-    setText: (text: string) => {
-        const dom = `<div data-slate-node="element"><span data-slate-node="text"><span data-slate-leaf="true"><span data-slate-string="true"></span></span></span></div>`;
-        const element = document.createElement('template');
-        element.innerHTML = dom;
-        const officialTextarea = document.querySelector(Kimi.selector.officialTextarea);
-        let lines = text.split('\n');
-        for (let line of lines) {
-            let ele = element.content.cloneNode(true) as HTMLElement;
-            ele.querySelector('span[data-slate-string="true"]').textContent = line;
-            officialTextarea.appendChild(ele);
-        }
-        // officialTextarea.innerHTML = doms.join('\n');
-        // officialTextarea.textContent = text.trim();
-    }
-}
-*/
-
-
 const ChatGPT: IPlatform = {
     name: 'ChatGPT',
     baseUrl: 'chatgpt.com',
@@ -150,14 +98,14 @@ const ChatGPT: IPlatform = {
 
 const Aizex: IPlatform = {
     name: 'Aizex',
-    baseUrl: ['aizex.cn', 'aizex.net', 'aizex.me'],
+    baseUrl: ['aizex.cn', 'aizex.net', 'aizex.me', 'memofun.net'],
     matchUrl: (url: string) => {
         const urlObj = new URL(url);
         const host = urlObj.hostname;
         const path = urlObj.pathname;
         const isAizex = (Aizex.baseUrl as string[]).some(base => host.endsWith(base) && host !== base);
-        const prefix = host.split('aizex')[0];
-        if (isAizex && prefix.endsWith('-c.')) {
+        const prefix = host.split('.')[0];
+        if (isAizex && prefix.endsWith('-c')) {
             return false;
         }
         return isAizex && path.startsWith('/');
@@ -201,8 +149,17 @@ const Claude: IPlatform = {
         const host = urlObj.hostname;
         // const path = urlObj.pathname;
         const isClaude = (Claude.baseUrl as string[]).some(base => host.endsWith(base));
-        const prefix = host.split('aizex')[0];
-        if (!isClaude && prefix.endsWith('-c.')) {
+        // https://stug-c.memofun.net/new
+        // https://stug-c.aizex.cn/new
+        const isAizexClaude = (() => {
+            const aizexBaseUrls = (Aizex.baseUrl as string[]);
+            const isAizex = aizexBaseUrls.some(base => host.endsWith(base));
+            if (!isAizex) return false;
+            const firstPart = host.split('.aizex')[0];
+            return firstPart.endsWith('-c');
+        })();
+
+        if (!isClaude && isAizexClaude) {
             return true;
         }
         return isClaude;
@@ -267,7 +224,7 @@ const Gemini: IPlatform = {
     baseUrl: 'gemini.google.com',
     selector: {
         officialTextarea: 'rich-textarea > div.ql-editor.textarea',
-        submitButton: '.action-wrapper button.send-button',
+        submitButton: '.input-buttons-wrapper-bottom button.send-button',
         chatSessionTitle: '',
     },
     css: {
@@ -301,7 +258,7 @@ const Deepseek: IPlatform = {
     baseUrl: 'chat.deepseek.com',
     selector: {
         officialTextarea: 'textarea#chat-input',
-        submitButton: 'div[role="button"]:last-child',
+        submitButton: 'div[role="button"]._7436101',
         chatSessionTitle: '',
     },
     css: {
@@ -344,7 +301,35 @@ const GoogleAIStudio: IPlatform = {
 }
 
 
-export const Platforms: IPlatform[] = [Poe, Mistral, ChatGPT, Aizex, ChatGLM, Gemini, Claude, Deepseek, GoogleAIStudio];
+const Grok: IPlatform = {
+    name: 'Grok',
+    baseUrl: 'grok.com',
+    selector: {
+        officialTextarea: 'textarea.w-full',
+        submitButton: 'button[type="submit"]',
+        chatSessionTitle: '',
+    },
+    css: {
+        backgroundColor: 'var(--background)',
+        primaryColor: '#1d9bf0',
+    },
+    createTextarea: () => {
+        const textarea: HTMLTextAreaElement = document.createElement('textarea');
+        Object.assign(textarea.style, {
+            borderRadius: '8px',
+            padding: '12px'
+        });
+        textarea.placeholder = 'Talk to Grok...';
+        return textarea;
+    }
+}
+
+
+export const Platforms: IPlatform[] = [
+    Poe, Mistral, ChatGPT,
+    Aizex, ChatGLM, Gemini,
+    Claude, Deepseek, GoogleAIStudio, Grok
+];
 
 export let currentPlatform: IPlatform;
 export const togglePlatform = (name: string) => {

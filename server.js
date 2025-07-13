@@ -16,6 +16,19 @@ const httpGetStatus = util.promisify((url, cb) => http.get(url, (res) => cb(null
 
 console.log('👀 watch & serve 🤲\n###################\n')
 
+// 添加全局异常处理，防止进程退出
+process.on('uncaughtException', (error) => {
+    console.error(bold(red('❌ Uncaught Exception:')))
+    console.error(error)
+    console.log(cyan('Server continues running...'))
+})
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error(bold(red('❌ Unhandled Rejection at:')), promise)
+    console.error(bold(red('Reason:')), reason)
+    console.log(cyan('Server continues running...'))
+})
+
 const port = pkg.config.port
 const destDir = 'dist/'
 const devScriptInFile = 'dev.user.js'
@@ -99,21 +112,43 @@ loadConfigFile(path.resolve(__dirname, 'rollup.config.mjs')).then(
         }
 
         watcher.on('event', event => {
-            if (event.code === 'BUNDLE_START') {
-                console.log(cyan(`bundles ${bold(event.input)} → ${bold(event.output.map(fullPath => path.relative(path.resolve(__dirname), fullPath)).join(', '))}...`))
-            } else if (event.code === 'BUNDLE_END') {
-                outFiles = event.output.map(fullPath => path.relative(path.resolve(destDir), fullPath))
-                console.log(green(`created ${bold(event.output.map(fullPath => path.relative(path.resolve(__dirname), fullPath)).join(', '))} in ${event.duration}ms`))
-            } else if (event.code === 'ERROR') {
-                console.log(bold(red('⚠ Error')))
-                console.log(event.error)
-            }
-            if ('result' in event && event.result) {
-                event.result.close()
+            try {
+                if (event.code === 'BUNDLE_START') {
+                    console.log(cyan(`bundles ${bold(event.input)} → ${bold(event.output.map(fullPath => path.relative(path.resolve(__dirname), fullPath)).join(', '))}...`))
+                } else if (event.code === 'BUNDLE_END') {
+                    outFiles = event.output.map(fullPath => path.relative(path.resolve(destDir), fullPath))
+                    console.log(green(`created ${bold(event.output.map(fullPath => path.relative(path.resolve(__dirname), fullPath)).join(', '))} in ${event.duration}ms`))
+                } else if (event.code === 'ERROR') {
+                    console.log(bold(red('⚠ Compilation Error')))
+                    console.error(event.error.message || event.error)
+                    console.log(cyan('Waiting for changes to retry compilation...'))
+                }
+                if ('result' in event && event.result) {
+                    event.result.close()
+                }
+            } catch (err) {
+                console.error(bold(red('❌ Error in watcher event handler:')))
+                console.error(err)
             }
         })
 
-        // stop watching
-        watcher.close()
+        // 添加进程信号处理，优雅关闭
+        process.on('SIGINT', () => {
+            console.log('\n🛑 Received SIGINT, shutting down gracefully...')
+            watcher.close()
+            server.close()
+            process.exit(0)
+        })
+
+        process.on('SIGTERM', () => {
+            console.log('\n🛑 Received SIGTERM, shutting down gracefully...')
+            watcher.close()
+            server.close()
+            process.exit(0)
+        })
     }
-)
+).catch(error => {
+    console.error(bold(red('❌ Failed to load rollup config:')))
+    console.error(error)
+    console.log(cyan('Server will continue running without file watching...'))
+})
