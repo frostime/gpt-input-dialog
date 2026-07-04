@@ -8,7 +8,8 @@ import metablock from 'rollup-plugin-userscript-metablock'
 import cleanup from 'rollup-plugin-cleanup';
 
 import fs from 'fs'
-import pkg from './package.json' assert { type: 'json' }
+
+const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'))
 
 fs.mkdir('dist/', { recursive: true }, () => null)
 

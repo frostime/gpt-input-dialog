@@ -1,6 +1,8 @@
 dist/**
 !dist/bundle.user.js
 .vscode
+mutagen.yml
+mutagen.yml.lock
 
 # Logs
 logs
