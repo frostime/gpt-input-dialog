@@ -81,7 +81,7 @@ const install = () => {
     const dialog = new TextInputDialog();
     dialog.render(document.body);
     dialog.bindConfirmCallback(confirmed);
-    updateStyleSheet(dialog.overlay, 'custom-dialog-style', StyleSheet(FontFamily, platform.currentPlatform));
+    updateStyleSheet(dialog.dialog, 'custom-dialog-style', StyleSheet(FontFamily, platform.currentPlatform));
 
     //监听按键
     document.addEventListener('keydown', (event) => {
@@ -109,9 +109,9 @@ if (currentPlatform === null) {
 
     const intervalId = setInterval(() => {
         elapsedTime += checkInterval;
-        const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
+        const dialogEl = document.getElementById(TextInputDialog.DIALOG_ID);
 
-        if (!overlay) {
+        if (!dialogEl) {
             console.info('Overlay not found, install again');
             install();
         }

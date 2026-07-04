@@ -123,9 +123,8 @@ const createReloadIcon = () => {
 
 export class TextInputDialog {
 
-    public static readonly OVERLAY_ID = 'overlay';
+    public static readonly DIALOG_ID = 'dialog';
 
-    overlay: HTMLDivElement;
     dialog: HTMLDivElement;
     textarea: HTMLTextAreaElement;
     cancelButton: HTMLButtonElement;
@@ -145,23 +144,15 @@ export class TextInputDialog {
     private buildDialog() {
         const i18n = useI18n();
 
-        const overlay: HTMLDivElement = document.createElement('div');
-        overlay.id = TextInputDialog.OVERLAY_ID;
-        overlay.style.position = 'fixed';
-        overlay.style.top = '0';
-        overlay.style.left = '0';
-        overlay.style.width = '100%';
-        overlay.style.height = '100%';
-        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-        overlay.style.display = 'none';
-        overlay.style.justifyContent = 'center';
-        overlay.style.alignItems = 'center';
-        overlay.style.zIndex = '9999';
-        this.overlay = overlay;
-
         // Create the dialog
         const dialog: HTMLDivElement = document.createElement('div');
-        dialog.id = 'dialog';
+        dialog.id = TextInputDialog.DIALOG_ID;
+        dialog.style.position = 'fixed';
+        dialog.style.display = 'none';
+        dialog.style.zIndex = '9999';
+        dialog.style.bottom = '50px';
+        dialog.style.left = '50%';
+        dialog.style.transform = 'translateX(-50%)';
         this.dialog = dialog;
 
         // Create the text input area
@@ -248,52 +239,123 @@ export class TextInputDialog {
         dialog.appendChild(textInput);
         dialog.appendChild(bottom);
 
-        // Append dialog to the overlay
-        overlay.appendChild(dialog);
+        // Resize handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';
+        dialog.appendChild(resizeHandle);
+
+        // Drag logic
+        let isDragging = false;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+
+        dialog.addEventListener('mousedown', (e) => {
+            const target = e.target as HTMLElement;
+            if (
+                target.tagName === 'TEXTAREA' || target.closest('textarea') ||
+                target.tagName === 'BUTTON' || target.closest('button') ||
+                target.tagName === 'svg' || target.closest('svg') ||
+                target.classList.contains('resize-handle')
+            ) {
+                return;
+            }
+            isDragging = true;
+            const rect = dialog.getBoundingClientRect();
+            dragOffsetX = e.clientX - rect.left;
+            dragOffsetY = e.clientY - rect.top;
+            dialog.style.cursor = 'grabbing';
+            if (dialog.style.transform) {
+                dialog.style.left = `${rect.left}px`;
+                dialog.style.top = `${rect.top}px`;
+                dialog.style.bottom = 'auto';
+                dialog.style.transform = 'none';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            let x = e.clientX - dragOffsetX;
+            let y = e.clientY - dragOffsetY;
+            const maxX = window.innerWidth - dialog.offsetWidth;
+            const maxY = window.innerHeight - dialog.offsetHeight;
+            x = Math.max(0, Math.min(x, maxX));
+            y = Math.max(0, Math.min(y, maxY));
+            dialog.style.left = `${x}px`;
+            dialog.style.top = `${y}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            dialog.style.cursor = 'default';
+        });
+
+        // Resize logic
+        let isResizing = false;
+        let startWidth = 0;
+        let startHeight = 0;
+        let startX = 0;
+        let startY = 0;
+
+        resizeHandle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            startWidth = dialog.offsetWidth;
+            startHeight = dialog.offsetHeight;
+            startX = e.clientX;
+            startY = e.clientY;
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            const newWidth = startWidth + (e.clientX - startX);
+            const newHeight = startHeight + (e.clientY - startY);
+            dialog.style.width = `${Math.max(300, newWidth)}px`;
+            dialog.style.height = `${Math.max(200, newHeight)}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+        });
 
         cancelButton.addEventListener('click', () => {
-            overlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            dialog.style.display = 'none';
             focusOffcialTextarea();
         });
 
         fillButton.addEventListener('click', () => {
             globalThis.inputText = textarea.value;
-            overlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            dialog.style.display = 'none';
             this.confirmCallback(textarea.value, false);
         });
 
         confirmButton.addEventListener('click', () => {
             globalThis.inputText = textarea.value;
-            overlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            dialog.style.display = 'none';
             this.confirmCallback(textarea.value, true);
         });
     }
 
     render(container: HTMLElement) {
         console.log(`Install GPT-Dialog within: ${container.tagName}`)
-        if (container.querySelector(`#${TextInputDialog.OVERLAY_ID}`)) {
-            console.warn(`Overlay already exists, skip render`);
+        if (container.querySelector(`#${TextInputDialog.DIALOG_ID}`)) {
+            console.warn(`Dialog already exists, skip render`);
             return;
         }
-        container.appendChild(this.overlay);
+        container.appendChild(this.dialog);
     }
 
     hide() {
-        this.overlay.style.display = 'none';
-        document.body.style.overflow = 'auto';
+        this.dialog.style.display = 'none';
         focusOffcialTextarea();
     }
 
     show() {
         //避免重复显示
-        if (this.overlay.style.display === 'flex') {
+        if (this.dialog.style.display === 'flex') {
             return;
         }
-        this.overlay.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+        this.dialog.style.display = 'flex';
         this.updateDialog();
         this.textarea.focus();
     }

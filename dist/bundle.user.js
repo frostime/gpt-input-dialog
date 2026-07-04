@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.17.0
+// @version     5.18.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -88,11 +88,21 @@ div#dialog {
     flex-direction: column;
     width: 50%;
     max-width: 90%;
-    min-width: 45%;
+    min-width: 600px;
     height: 500px;
+    min-height: 320px;
     max-height: 80%;
+    position: fixed;
+}
+div#dialog .resize-handle {
     position: absolute;
-    bottom: 50px;
+    right: 0;
+    bottom: 0;
+    width: 16px;
+    height: 16px;
+    cursor: nwse-resize;
+    background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.3) 50%);
+    border-bottom-right-radius: 8px;
 }
 div#dialog svg {
     fill: ${currentPlatform.css.primaryColor};
@@ -672,21 +682,14 @@ div#dialog button#confirm-button {
         }
         buildDialog() {
             const i18n = useI18n();
-            const overlay = document.createElement('div');
-            overlay.id = TextInputDialog.OVERLAY_ID;
-            overlay.style.position = 'fixed';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100%';
-            overlay.style.height = '100%';
-            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-            overlay.style.display = 'none';
-            overlay.style.justifyContent = 'center';
-            overlay.style.alignItems = 'center';
-            overlay.style.zIndex = '9999';
-            this.overlay = overlay;
             const dialog = document.createElement('div');
-            dialog.id = 'dialog';
+            dialog.id = TextInputDialog.DIALOG_ID;
+            dialog.style.position = 'fixed';
+            dialog.style.display = 'none';
+            dialog.style.zIndex = '9999';
+            dialog.style.bottom = '50px';
+            dialog.style.left = '50%';
+            dialog.style.transform = 'translateX(-50%)';
             this.dialog = dialog;
             const textInput = document.createElement('div');
             textInput.id = 'dialog-text-input';
@@ -747,44 +750,105 @@ div#dialog button#confirm-button {
             bottom.appendChild(bottomRight);
             dialog.appendChild(textInput);
             dialog.appendChild(bottom);
-            overlay.appendChild(dialog);
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'resize-handle';
+            dialog.appendChild(resizeHandle);
+            let isDragging = false;
+            let dragOffsetX = 0;
+            let dragOffsetY = 0;
+            dialog.addEventListener('mousedown', (e) => {
+                const target = e.target;
+                if (target.tagName === 'TEXTAREA' || target.closest('textarea') ||
+                    target.tagName === 'BUTTON' || target.closest('button') ||
+                    target.tagName === 'svg' || target.closest('svg') ||
+                    target.classList.contains('resize-handle')) {
+                    return;
+                }
+                isDragging = true;
+                const rect = dialog.getBoundingClientRect();
+                dragOffsetX = e.clientX - rect.left;
+                dragOffsetY = e.clientY - rect.top;
+                dialog.style.cursor = 'grabbing';
+                if (dialog.style.transform) {
+                    dialog.style.left = `${rect.left}px`;
+                    dialog.style.top = `${rect.top}px`;
+                    dialog.style.bottom = 'auto';
+                    dialog.style.transform = 'none';
+                }
+            });
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging)
+                    return;
+                let x = e.clientX - dragOffsetX;
+                let y = e.clientY - dragOffsetY;
+                const maxX = window.innerWidth - dialog.offsetWidth;
+                const maxY = window.innerHeight - dialog.offsetHeight;
+                x = Math.max(0, Math.min(x, maxX));
+                y = Math.max(0, Math.min(y, maxY));
+                dialog.style.left = `${x}px`;
+                dialog.style.top = `${y}px`;
+            });
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                dialog.style.cursor = 'default';
+            });
+            let isResizing = false;
+            let startWidth = 0;
+            let startHeight = 0;
+            let startX = 0;
+            let startY = 0;
+            resizeHandle.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                startWidth = dialog.offsetWidth;
+                startHeight = dialog.offsetHeight;
+                startX = e.clientX;
+                startY = e.clientY;
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing)
+                    return;
+                const newWidth = startWidth + (e.clientX - startX);
+                const newHeight = startHeight + (e.clientY - startY);
+                dialog.style.width = `${Math.max(300, newWidth)}px`;
+                dialog.style.height = `${Math.max(200, newHeight)}px`;
+            });
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+            });
             cancelButton.addEventListener('click', () => {
-                overlay.style.display = 'none';
-                document.body.style.overflow = 'auto';
+                dialog.style.display = 'none';
                 focusOffcialTextarea();
             });
             fillButton.addEventListener('click', () => {
                 globalThis.inputText = textarea.value;
-                overlay.style.display = 'none';
-                document.body.style.overflow = 'auto';
+                dialog.style.display = 'none';
                 this.confirmCallback(textarea.value, false);
             });
             confirmButton.addEventListener('click', () => {
                 globalThis.inputText = textarea.value;
-                overlay.style.display = 'none';
-                document.body.style.overflow = 'auto';
+                dialog.style.display = 'none';
                 this.confirmCallback(textarea.value, true);
             });
         }
         render(container) {
             console.log(`Install GPT-Dialog within: ${container.tagName}`);
-            if (container.querySelector(`#${TextInputDialog.OVERLAY_ID}`)) {
-                console.warn(`Overlay already exists, skip render`);
+            if (container.querySelector(`#${TextInputDialog.DIALOG_ID}`)) {
+                console.warn(`Dialog already exists, skip render`);
                 return;
             }
-            container.appendChild(this.overlay);
+            container.appendChild(this.dialog);
         }
         hide() {
-            this.overlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            this.dialog.style.display = 'none';
             focusOffcialTextarea();
         }
         show() {
-            if (this.overlay.style.display === 'flex') {
+            if (this.dialog.style.display === 'flex') {
                 return;
             }
-            this.overlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+            this.dialog.style.display = 'flex';
             this.updateDialog();
             this.textarea.focus();
         }
@@ -805,7 +869,7 @@ div#dialog button#confirm-button {
             this.textarea.focus();
         }
     }
-    TextInputDialog.OVERLAY_ID = 'overlay';
+    TextInputDialog.DIALOG_ID = 'dialog';
 
     const FontFamily = 'HarmonyOS Sans, PingFang SC, Lantinghei SC, Microsoft YaHei, Arial, sans-serif';
     function submit() {
@@ -874,7 +938,7 @@ div#dialog button#confirm-button {
         const dialog = new TextInputDialog();
         dialog.render(document.body);
         dialog.bindConfirmCallback(confirmed);
-        updateStyleSheet(dialog.overlay, 'custom-dialog-style', StyleSheet(FontFamily, currentPlatform$1));
+        updateStyleSheet(dialog.dialog, 'custom-dialog-style', StyleSheet(FontFamily, currentPlatform$1));
         document.addEventListener('keydown', (event) => {
             if (event.altKey && event.key === 's') {
                 event.preventDefault();
@@ -895,8 +959,8 @@ div#dialog button#confirm-button {
         let elapsedTime = 0;
         const intervalId = setInterval(() => {
             elapsedTime += checkInterval;
-            const overlay = document.getElementById(TextInputDialog.OVERLAY_ID);
-            if (!overlay) {
+            const dialogEl = document.getElementById(TextInputDialog.DIALOG_ID);
+            if (!dialogEl) {
                 console.info('Overlay not found, install again');
                 install();
             }

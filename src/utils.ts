@@ -4,7 +4,7 @@
  * @Date         : 2023-08-16 17:05:29
  * @FilePath     : /src/utils.ts
  * @LastEditTime : 2024-11-19 21:37:58
- * @Description  : 
+ * @Description  :
  */
 import * as platform from './platform';
 
@@ -88,11 +88,21 @@ div#dialog {
     flex-direction: column;
     width: 50%;
     max-width: 90%;
-    min-width: 45%;
+    min-width: 600px;
     height: 500px;
+    min-height: 320px;
     max-height: 80%;
+    position: fixed;
+}
+div#dialog .resize-handle {
     position: absolute;
-    bottom: 50px;
+    right: 0;
+    bottom: 0;
+    width: 16px;
+    height: 16px;
+    cursor: nwse-resize;
+    background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.3) 50%);
+    border-bottom-right-radius: 8px;
 }
 div#dialog svg {
     fill: ${currentPlatform.css.primaryColor};
