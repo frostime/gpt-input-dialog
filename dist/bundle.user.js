@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.18.0
+// @version     5.19.0
 // @match       *://poe.com/chat/*
 // @match       *://poe.com
 // @match       *://chat.mistral.ai/chat
@@ -385,8 +385,8 @@ div#dialog button#confirm-button {
         name: 'Deepseek',
         baseUrl: 'chat.deepseek.com',
         selector: {
-            officialTextarea: 'textarea#chat-input',
-            submitButton: 'div[role="button"]._7436101',
+            officialTextarea: 'textarea[placeholder*="DeepSeek"], textarea.d96f2d2a, textarea[name="search"]',
+            submitButton: 'div.ds-button--primary.ds-button--filled.ds-button--circle[role="button"]',
             chatSessionTitle: '',
         },
         css: {
@@ -429,8 +429,8 @@ div#dialog button#confirm-button {
         name: 'Grok',
         baseUrl: 'grok.com',
         selector: {
-            officialTextarea: 'textarea.w-full',
-            submitButton: 'button[type="submit"]',
+            officialTextarea: 'div.ProseMirror[contenteditable="true"][role="textbox"], div.tiptap.ProseMirror',
+            submitButton: 'button[data-testid="chat-submit"], button[type="submit"][aria-label="提交"]',
             chatSessionTitle: '',
         },
         css: {
@@ -445,6 +445,14 @@ div#dialog button#confirm-button {
             });
             textarea.placeholder = 'Talk to Grok...';
             return textarea;
+        },
+        getText: () => {
+            const officialTextarea = document.querySelector(Grok.selector.officialTextarea);
+            return ContenteditableTextarea.getText(officialTextarea);
+        },
+        setText: (text) => {
+            const officialTextarea = document.querySelector(Grok.selector.officialTextarea);
+            ContenteditableTextarea.setText(officialTextarea, text);
         }
     };
     const Platforms = [

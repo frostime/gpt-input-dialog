@@ -257,8 +257,8 @@ const Deepseek: IPlatform = {
     name: 'Deepseek',
     baseUrl: 'chat.deepseek.com',
     selector: {
-        officialTextarea: 'textarea#chat-input',
-        submitButton: 'div[role="button"]._7436101',
+        officialTextarea: 'textarea[placeholder*="DeepSeek"], textarea.d96f2d2a, textarea[name="search"]',
+        submitButton: 'div.ds-button--primary.ds-button--filled.ds-button--circle[role="button"]',
         chatSessionTitle: '',
     },
     css: {
@@ -305,8 +305,8 @@ const Grok: IPlatform = {
     name: 'Grok',
     baseUrl: 'grok.com',
     selector: {
-        officialTextarea: 'textarea.w-full',
-        submitButton: 'button[type="submit"]',
+        officialTextarea: 'div.ProseMirror[contenteditable="true"][role="textbox"], div.tiptap.ProseMirror',
+        submitButton: 'button[data-testid="chat-submit"], button[type="submit"][aria-label="提交"]',
         chatSessionTitle: '',
     },
     css: {
@@ -321,6 +321,14 @@ const Grok: IPlatform = {
         });
         textarea.placeholder = 'Talk to Grok...';
         return textarea;
+    },
+    getText: () => {
+        const officialTextarea: HTMLDivElement = document.querySelector(Grok.selector.officialTextarea);
+        return ContenteditableTextarea.getText(officialTextarea);
+    },
+    setText: (text: string) => {
+        const officialTextarea: HTMLDivElement = document.querySelector(Grok.selector.officialTextarea);
+        ContenteditableTextarea.setText(officialTextarea, text);
     }
 }
 
