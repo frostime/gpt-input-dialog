@@ -2,7 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.20.0
+// @version     5.20.1
 // @match       *://chat.mistral.ai/chat
 // @match       *://chat.mistral.ai/chat/*
 // @match       *://chat.openai.com/*
