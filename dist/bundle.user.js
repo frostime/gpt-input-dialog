@@ -215,12 +215,12 @@ div#dialog button#confirm-button {
             chatSessionTitle: '#chat-title',
         },
         css: {
-            backgroundColor: 'var(--main-surface-primary)',
+            backgroundColor: 'Canvas',
             primaryColor: '#2e95d3',
         },
         createTextarea: () => {
             const textarea = document.createElement('textarea');
-            textarea.style.backgroundColor = 'var(--main-surface-primary)';
+            textarea.style.backgroundColor = ChatGPT.css.backgroundColor;
             textarea.style.padding = '0px';
             textarea.placeholder = 'Talk to ...';
             return textarea;
