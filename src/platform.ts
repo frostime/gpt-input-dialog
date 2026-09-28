@@ -66,8 +66,8 @@ const ChatGPT: IPlatform = {
     name: 'ChatGPT',
     baseUrl: 'chatgpt.com',
     selector: {
-        officialTextarea: 'div#prompt-textarea',
-        submitButton: 'button[data-testid="send-button"]',
+        officialTextarea: '.ProseMirror[contenteditable="true"][role="textbox"]',
+        submitButton: 'form button[type="submit"]',
         chatSessionTitle: '#chat-title', //不存在
     },
     css: {
@@ -82,16 +82,30 @@ const ChatGPT: IPlatform = {
         return textarea;
     },
     getSubmitButton: () => {
-        let button = document.querySelector('button[data-testid="send-button"]') as HTMLButtonElement;
-        return button;
+        const editor = document.querySelector(ChatGPT.selector.officialTextarea);
+        return editor?.closest('form')?.querySelector<HTMLButtonElement>('button[type="submit"]') ?? null;
     },
     getText: () => {
-        const officialTextarea: HTMLDivElement = document.querySelector(ChatGPT.selector.officialTextarea);
-        return ContenteditableTextarea.getText(officialTextarea);
+        const editor = document.querySelector<HTMLDivElement>(ChatGPT.selector.officialTextarea);
+        return editor?.innerText ?? '';
     },
-    setText: (text: string) => {
-        const officialTextarea: HTMLDivElement = document.querySelector(ChatGPT.selector.officialTextarea);
-        ContenteditableTextarea.setText(officialTextarea, text);
+    setText: async (text: string) => {
+        const editor = document.querySelector<HTMLDivElement>(ChatGPT.selector.officialTextarea);
+        if (!editor) return;
+
+        editor.focus();
+        if (editor.textContent) {
+            const range = document.createRange();
+            range.selectNodeContents(editor);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('delete');
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+
+        editor.focus();
+        document.execCommand('insertText', false, text);
     }
 }
 

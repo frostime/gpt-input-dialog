@@ -37,6 +37,6 @@ interface IPlatform {
     };
     createTextarea: () => HTMLTextAreaElement;
     getText?: () => string;
-    setText?: (text: string) => void;
-    getSubmitButton?: () => HTMLButtonElement;
+    setText?: (text: string) => void | Promise<void>;
+    getSubmitButton?: () => HTMLButtonElement | null;
 }

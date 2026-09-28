@@ -2,9 +2,7 @@
 // @name        GPT Input Dialog
 // @description 为一系列 GPT 类网站添加长文输入对话框 | Add a long text input dialog to a series of GPT-like platforms
 // @namespace   gitlab.com/frostime
-// @version     5.19.0
-// @match       *://poe.com/chat/*
-// @match       *://poe.com
+// @version     5.20.0
 // @match       *://chat.mistral.ai/chat
 // @match       *://chat.mistral.ai/chat/*
 // @match       *://chat.openai.com/*
@@ -17,9 +15,8 @@
 // @match       *://gemini.google.com/app*
 // @match       *://grok.com
 // @match       *://grok.com/chat/*
-// @match       https://claude.ai/*
+// @match       *://grok.com/c/*
 // @match       https://chat.deepseek.com/*
-// @match       https://aistudio.google.com/*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=chat.openai.com
 // @run-at      document-end
 // @author      frostime
@@ -213,8 +210,8 @@ div#dialog button#confirm-button {
         name: 'ChatGPT',
         baseUrl: 'chatgpt.com',
         selector: {
-            officialTextarea: 'div#prompt-textarea',
-            submitButton: 'button[data-testid="send-button"]',
+            officialTextarea: '.ProseMirror[contenteditable="true"][role="textbox"]',
+            submitButton: 'form button[type="submit"]',
             chatSessionTitle: '#chat-title',
         },
         css: {
@@ -229,16 +226,29 @@ div#dialog button#confirm-button {
             return textarea;
         },
         getSubmitButton: () => {
-            let button = document.querySelector('button[data-testid="send-button"]');
-            return button;
+            const editor = document.querySelector(ChatGPT.selector.officialTextarea);
+            return editor?.closest('form')?.querySelector('button[type="submit"]') ?? null;
         },
         getText: () => {
-            const officialTextarea = document.querySelector(ChatGPT.selector.officialTextarea);
-            return ContenteditableTextarea.getText(officialTextarea);
+            const editor = document.querySelector(ChatGPT.selector.officialTextarea);
+            return editor?.innerText ?? '';
         },
-        setText: (text) => {
-            const officialTextarea = document.querySelector(ChatGPT.selector.officialTextarea);
-            ContenteditableTextarea.setText(officialTextarea, text);
+        setText: async (text) => {
+            const editor = document.querySelector(ChatGPT.selector.officialTextarea);
+            if (!editor)
+                return;
+            editor.focus();
+            if (editor.textContent) {
+                const range = document.createRange();
+                range.selectNodeContents(editor);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('delete');
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            editor.focus();
+            document.execCommand('insertText', false, text);
         }
     };
     const Aizex = {
@@ -896,13 +906,13 @@ div#dialog button#confirm-button {
             }
         }, 500);
     }
-    function confirmed(text, doSubmit = false) {
+    async function confirmed(text, doSubmit = false) {
         if (!text)
             return;
         const textarea = queryOfficalTextarea();
         if (textarea) {
             if (currentPlatform$1.setText) {
-                currentPlatform$1.setText(text);
+                await currentPlatform$1.setText(text);
             }
             else {
                 textarea.value = text;

@@ -29,13 +29,13 @@ function submit() {
     }, 500);
 }
 
-function confirmed(text: string, doSubmit: boolean = false) {
+async function confirmed(text: string, doSubmit: boolean = false) {
     if (!text) return;
 
     const textarea = queryOfficalTextarea();
     if (textarea) {
         if (platform.currentPlatform.setText) {
-            platform.currentPlatform.setText(text);
+            await platform.currentPlatform.setText(text);
         } else {
             textarea.value = text;
         }
